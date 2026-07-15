@@ -1,64 +1,60 @@
-# Quête du quotidien
+# Quête du quotidien (QDQ)
 
-Petite application web mobile-first en HTML, CSS et JavaScript.
+A personal RPG-inspired habit tracker built as a Progressive Web App.
 
-## Ce qu'elle fait
+The goal of this project is twofold:
 
-- Quêtes quotidiennes personnalisables
-- Points d'expérience, niveaux et rangs
-- Vue des sept derniers jours
-- Note d'initiative quotidienne
-- Bilan hebdomadaire
-- Export JSON
-- Sauvegarde locale dans le navigateur
-- Installation possible comme PWA
-- Fonctionnement hors ligne après la première ouverture
+- Help build sustainable daily habits.
+- Learn software engineering and DevOps practices on a real project.
 
-## Lancer sur un ordinateur
+---
 
-Le service worker d'une PWA ne fonctionne pas correctement en ouvrant simplement `index.html` en `file://`.
-Il faut lancer un petit serveur local.
+## Vision
 
-Avec Python :
+Quête du quotidien is not a traditional todo list.
 
-```bash
-cd julien_rpg_tracker
-python -m http.server 8000
-```
+It rewards progress instead of perfection.
 
-Puis ouvrir :
+The application encourages small, consistent actions without punishing missed days.
 
-```text
-http://localhost:8000
-```
+---
 
-## Tester sur le téléphone
+## Technologies
 
-Le téléphone et l'ordinateur doivent être sur le même réseau Wi-Fi.
+- HTML
+- CSS
+- JavaScript
+- Progressive Web App (PWA)
+- GitHub Pages
 
-1. Sur le PC, trouver son adresse IP locale avec `ipconfig`.
-2. Lancer :
+Future:
 
-```bash
-python -m http.server 8000 --bind 0.0.0.0
-```
+- GitHub Actions
+- ESLint
+- Playwright
+- Automated deployment
 
-3. Sur le téléphone, ouvrir :
+---
 
-```text
-http://ADRESSE_IP_DU_PC:8000
-```
+## Project
 
-Exemple : `http://192.168.1.25:8000`
+- 📋 Project Board
+- 🐞 Issues
+- 📖 Documentation
 
-Pour une installation durable sur Android, le plus simple sera ensuite de publier gratuitement le dossier sur GitHub Pages, Netlify ou Cloudflare Pages. Une PWA installable demande normalement HTTPS, sauf sur `localhost`.
+---
 
-## PWA, simplement
+## Roadmap
 
-Une PWA est un site web qui peut se comporter presque comme une application :
-- icône sur l'écran d'accueil ;
-- ouverture sans barre de navigateur ;
-- fonctionnement hors ligne ;
-- pas besoin de passer par le Play Store.
+- Stable prototype
+- Project architecture
+- DevOps pipeline
+- RPG progression system
+- Statistics
+- Version 1.0
 
-Les fichiers `manifest.json` et `sw.js` ajoutent ces capacités.
+---
+
+## License
+
+MIT
