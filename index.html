@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f2937" />
+  <meta name="description" content="Suivi quotidien RPG pour prendre soin de soi, du couple et de la maison." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Quête du quotidien</title>
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Journal de progression</p>
+      <h1>Quête du quotidien</h1>
+      <p id="todayLabel" class="muted"></p>
+    </div>
+    <button id="installBtn" class="secondary hidden" type="button">Installer</button>
+  </header>
+
+  <main>
+    <section class="card player-card" aria-labelledby="playerTitle">
+      <div class="row between">
+        <div>
+          <p class="eyebrow">Profil</p>
+          <h2 id="playerTitle">Julien</h2>
+          <p id="rankLabel" class="rank">Apprenti du quotidien</p>
+        </div>
+        <div class="level-badge" aria-label="Niveau">
+          <span>Niv.</span>
+          <strong id="levelValue">1</strong>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="row between small">
+          <span id="xpLabel">0 XP</span>
+          <span id="nextLevelLabel">100 XP pour le niveau suivant</span>
+        </div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <div id="xpBar" class="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div><strong id="totalXp">0</strong><span>XP total</span></div>
+        <div><strong id="todayScore">0/0</strong><span>Quêtes du jour</span></div>
+        <div><strong id="activeDays">0</strong><span>Jours actifs</span></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="questsTitle">
+      <div class="row between">
+        <div>
+          <p class="eyebrow">Aujourd'hui</p>
+          <h2 id="questsTitle">Quêtes quotidiennes</h2>
+        </div>
+        <button id="editQuestsBtn" class="text-btn" type="button">Modifier</button>
+      </div>
+      <p class="muted">Une journée imparfaite compte quand même. Le but est de revenir, pas d'être parfait.</p>
+      <div id="questList" class="quest-list"></div>
+    </section>
+
+    <section class="card" aria-labelledby="initiativeTitle">
+      <p class="eyebrow">Trace d'initiative</p>
+      <h2 id="initiativeTitle">Qu'ai-je lancé aujourd'hui ?</h2>
+      <textarea id="initiativeNote" rows="3" placeholder="Ex. J'ai proposé une balade, lancé une lessive, cherché une idée pour le salon…"></textarea>
+      <button id="saveNoteBtn" type="button">Enregistrer</button>
+      <p id="noteSaved" class="success hidden">Enregistré.</p>
+    </section>
+
+    <section class="card" aria-labelledby="weekTitle">
+      <div class="row between">
+        <div>
+          <p class="eyebrow">Vue d'ensemble</p>
+          <h2 id="weekTitle">Les 7 derniers jours</h2>
+        </div>
+        <span id="weekPercent" class="pill">0 %</span>
+      </div>
+      <div id="weekGrid" class="week-grid"></div>
+    </section>
+
+    <section class="card" aria-labelledby="reviewTitle">
+      <p class="eyebrow">Bilan hebdomadaire</p>
+      <h2 id="reviewTitle">Prendre du recul</h2>
+      <label>
+        Cette semaine, je suis fier de…
+        <textarea id="proudInput" rows="2"></textarea>
+      </label>
+      <label>
+        Ce qui m'a fait dévier…
+        <textarea id="obstacleInput" rows="2"></textarea>
+      </label>
+      <label>
+        Ma seule priorité pour la semaine prochaine…
+        <textarea id="priorityInput" rows="2"></textarea>
+      </label>
+      <button id="saveReviewBtn" type="button">Enregistrer le bilan</button>
+      <p id="reviewSaved" class="success hidden">Bilan enregistré.</p>
+    </section>
+
+    <section class="card danger-zone">
+      <details>
+        <summary>Données et réinitialisation</summary>
+        <div class="details-body">
+          <button id="exportBtn" class="secondary" type="button">Exporter mes données</button>
+          <button id="resetBtn" class="danger" type="button">Tout réinitialiser</button>
+          <p class="muted small">Les données restent uniquement dans le navigateur de cet appareil.</p>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <dialog id="questDialog">
+    <form method="dialog" id="questForm">
+      <div class="row between">
+        <h2>Modifier les quêtes</h2>
+        <button value="cancel" class="text-btn" aria-label="Fermer">Fermer</button>
+      </div>
+      <div id="questEditor"></div>
+      <button id="addQuestBtn" class="secondary" type="button">Ajouter une quête</button>
+      <menu>
+        <button value="cancel" class="secondary">Annuler</button>
+        <button id="saveQuestsBtn" value="default">Enregistrer</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
