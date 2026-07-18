@@ -2,7 +2,7 @@
 name: Feature
 about: Propose a new user-facing feature
 title: ""
-labels: feature
+labels: ✨ feature
 assignees: ""
 ---
 
@@ -20,6 +20,6 @@ Explain why this feature is useful and what need it addresses.
 
 ## Acceptance Criteria
 
-- [ ]
-- [ ]
-- [ ]
+- [ ] 
+- [ ] 
+- [ ] 

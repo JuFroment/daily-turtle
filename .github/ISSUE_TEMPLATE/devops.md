@@ -2,7 +2,7 @@
 name: Devops
 about: Improve the project's development workflow and tooling
 title: ""
-labels: devops
+labels: 🚀 devops
 assignees: ""
 ---
 
@@ -20,6 +20,6 @@ Explain why this improvement is needed.
 
 ## Acceptance Criteria
 
-- [ ]
-- [ ]
-- [ ]
+- [ ] 
+- [ ] 
+- [ ] 
