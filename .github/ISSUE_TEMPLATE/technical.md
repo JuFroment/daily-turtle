@@ -2,7 +2,7 @@
 name: Technical
 about: Internal technical improvements with no user-facing changes
 title: ""
-labels: technical
+labels: ⚙️ technical
 assignees: ""
 ---
 
@@ -20,6 +20,6 @@ Explain why this improvement is needed.
 
 ## Acceptance Criteria
 
-- [ ]
-- [ ]
-- [ ]
+- [ ] 
+- [ ] 
+- [ ] 

@@ -2,7 +2,7 @@
 name: Bug report
 about: Report something that is not working as expected
 title: ""
-labels: bug
+labels: 🐛 bug
 assignees: ""
 ---
 
@@ -18,11 +18,17 @@ Describe what should happen instead.
 
 ---
 
+## Root cause
+
+If known, describe the cause of this bug.
+
+---
+
 ## Steps to Reproduce
 
-1.
-2.
-3.
+1. 
+2. 
+3. 
 
 ---
 

@@ -2,7 +2,7 @@
 name: Documentation
 about: Improve developers' understanding of the project
 title: ""
-labels: documentation
+labels: 📚 documentation
 assignees: ""
 ---
 
@@ -20,6 +20,6 @@ Explain why this documentation is needed.
 
 ## Acceptance Criteria
 
-- [ ]
-- [ ]
-- [ ]
+- [ ] 
+- [ ] 
+- [ ] 
