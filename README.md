@@ -19,6 +19,14 @@ The application encourages small, consistent actions without punishing missed da
 
 ---
 
+## Design Guidelines
+
+The project's visual identity and design principles are documented in:
+
+- 📖 [Design Guidelines](docs/design-guidelines.md)
+
+---
+
 ## Technologies
 
 - HTML
@@ -38,9 +46,10 @@ Future:
 
 ## Project
 
-- 📋 Project Board
-- 🐞 Issues
-- 📖 Documentation
+
+- 📋 [Project Board](...)
+- 🐞 [Issues](../../issues)
+- 📖 [Documentation](docs/)
 
 ---
 
