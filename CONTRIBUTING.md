@@ -13,6 +13,15 @@ This document is intended to evolve alongside the project.
 - Improve the project one step at a time.
 - Document important decisions.
 
+## Main Branch Protection
+
+The `main` branch is protected.
+
+- Changes must be merged through Pull Requests.
+- Direct pushes to `main` are disabled.
+- Force pushes are blocked.
+- The branch cannot be deleted.
+
 ## Development Workflow
 
 - Create or choose an issue.
