@@ -1,4 +1,4 @@
-# Quête du quotidien (QDQ)
+# Daily Turtle (DT)
 
 A personal RPG-inspired habit tracker built as a Progressive Web App.
 
@@ -11,7 +11,7 @@ The goal of this project is twofold:
 
 ## Vision
 
-Quête du quotidien is not a traditional todo list.
+Daily Turtle is not a traditional todo list.
 
 It rewards progress instead of perfection.
 
