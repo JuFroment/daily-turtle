@@ -1,0 +1,12 @@
+* text=auto eol=lf
+
+*.md text diff=markdown
+*.json text
+*.yml text
+*.yaml text
+
+*.png binary
+*.jpg binary
+*.svg text
+*.ttf binary
+*.ico binary
