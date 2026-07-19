@@ -100,6 +100,20 @@ docs: add CONTRIBUTING.md
 - Test the changes (if possible).
 - Check for unrelated changes.
 
+A self-review should explain what has been verified before merging.
+Template for self reviews:
+```
+Self-review completed.
+
+Verified that:
+
+- ...
+- ...
+- ...
+
+Ready to merge.
+```
+
 ## Testing
 
 - Verify that the implemented change works as intended.
