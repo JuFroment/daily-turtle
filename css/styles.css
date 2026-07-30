@@ -176,6 +176,20 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
 .row { display: flex; align-items: center; gap: .75rem; }
 .between { justify-content: space-between; }
 
+.profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.profile-heading h2 {
+  margin-bottom: 0;
+}
+
+.profile-heading .text-btn {
+  font-size: 0.8rem;
+}
+
 .level-badge {
   width: 76px;
   height: 76px;

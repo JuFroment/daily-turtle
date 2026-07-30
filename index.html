@@ -32,7 +32,12 @@
       <div class="row between">
         <div>
           <p class="eyebrow">Profil</p>
-          <h2 id="playerTitle">Julien</h2>
+          <div class="profile-heading">
+            <h2 id="playerTitle">Julien</h2>
+            <button id="editProfileBtn" class="text-btn" type="button" aria-label="Modifier le nom du profil" title="Modifier le nom du profil">
+              <span aria-hidden="true">✎</span>
+            </button>
+          </div>
           <p id="rankLabel" class="rank">Apprenti du quotidien</p>
         </div>
         <div class="level-badge" aria-label="Niveau">
@@ -119,6 +124,35 @@
       </details>
     </section>
   </main>
+
+<dialog id="profileDialog">
+  <form method="dialog" id="profileForm">
+    <div class="row between">
+      <h2>Modifier le profil</h2>
+      <button
+        value="cancel"
+        class="text-btn"
+        aria-label="Fermer"
+      >
+        Fermer
+      </button>
+    </div>
+
+    <label for="profileNameInput">Nom du profil</label>
+    <input
+      id="profileNameInput"
+      type="text"
+      maxlength="50"
+      autocomplete="name"
+      required
+    />
+
+    <menu>
+      <button value="cancel" class="secondary">Annuler</button>
+      <button value="default">Enregistrer</button>
+    </menu>
+  </form>
+</dialog>
 
   <dialog id="questDialog">
     <form method="dialog" id="questForm">
