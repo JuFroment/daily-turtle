@@ -3,6 +3,7 @@ const THEME_KEY = "daily-turtle-theme";
 const savedTheme = localStorage.getItem(THEME_KEY) || "dark";
 
 const defaultState = {
+  profileName: "Julien",
   quests: [
     { id: crypto.randomUUID(), title: "Prendre une douche", xp: 15 },
     { id: crypto.randomUUID(), title: "Porter des vêtements propres et en bon état", xp: 10 },
@@ -101,7 +102,7 @@ function render() {
   const today = new Date();
   document.querySelector("#todayLabel").textContent =
     today.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
-
+  document.querySelector("#playerTitle").textContent = state.profileName;
   const totalXp = getTotalXp();
   const info = levelInfo(totalXp);
   document.querySelector("#levelValue").textContent = info.level;
@@ -219,6 +220,37 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+document.querySelector("#editProfileBtn").addEventListener("click", () => {
+  const input = document.querySelector("#profileNameInput");
+
+  input.value = state.profileName;
+  document.querySelector("#profileDialog").showModal();
+  input.focus();
+});
+
+document.querySelector("#profileForm").addEventListener("submit", event => {
+  if (event.submitter?.value === "cancel") {
+    return;
+  }
+
+  event.preventDefault();
+
+  const input = document.querySelector("#profileNameInput");
+  const profileName = input.value.trim();
+
+  if (!profileName) {
+    input.value = "";
+    input.reportValidity();
+    return;
+  }
+
+  state.profileName = profileName;
+  saveState();
+
+  document.querySelector("#profileDialog").close();
+  render();
+});
 
 document.querySelector("#saveNoteBtn").addEventListener("click", () => {
   currentDay().initiative = document.querySelector("#initiativeNote").value.trim();
