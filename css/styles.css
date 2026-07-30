@@ -1,8 +1,118 @@
 :root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #172033;
-  background: #eef2f7;
+  /* Thème clair */
   color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --background: #eef2f7;
+  --surface: #ffffff;
+  --surface-interactive: #f1f5f9;
+  --activity-rgb: 34 197 94;
+  --success-surface: #f0fdf4;
+  --success-border: #86efac;
+
+  --input-background: #ffffff;
+  --input-border: #cbd5e1;
+
+  --primary-action: #4f46e5;
+  --primary-action-text: #ffffff;
+
+  --secondary-action: #e5e7eb;
+  --secondary-action-text: #1f2937;
+
+  --danger-action: #991b1b;
+  --danger-action-text: #ffffff;
+
+  --focus: #6366f1;
+  --focus-ring: rgb(99 102 241 / 20%);
+
+  --text-primary: #172033;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --border: #cbd5e1;
+  
+  --button-background: #1f2937;
+  --button-text: #ffffff;
+
+  --card-shadow: 0 12px 30px rgb(15 23 42 / 7%);
+
+  --level-badge-background: #1f2937;
+  --level-badge-text: #ffffff;
+
+  --progress-track: #e2e8f0;
+  --progress-fill: linear-gradient(90deg, #2563eb, #7c3aed);
+
+  --checkbox-accent: #16a34a;
+  --quest-xp: #7c3aed;
+
+  --success-text: #15803d;
+
+  --pill-background: #ede9fe;
+  --pill-text: #6d28d9;
+
+  --dialog-shadow: 0 24px 70px rgb(15 23 42 / 30%);
+  --dialog-backdrop: rgb(15 23 42 / 55%);
+}
+
+html.dark {
+  /* Thème sombre */
+  color-scheme: dark;
+
+  --background: #212121;
+  --surface: #2d2d2d;
+  --surface-interactive: #1f2937;
+  --activity-rgb: 74 222 128;
+  --success-surface: #163d2a;
+  --success-border: #22c55e;
+
+  /* Modification des quêtes */
+  --input-background: #1f2937;
+  --input-border: #4b5563;
+
+  --primary-action: #4f46e5;
+  --primary-action-text: #ffffff;
+
+  --secondary-action: #374151;
+  --secondary-action-text: #ececec;
+
+  --danger-action: #991b1b;
+  --danger-action-text: #ffffff;
+
+  --focus: #818cf8;
+  --focus-ring: rgb(129 140 248 / 20%);
+
+  --text-primary: #ececec;
+  --text-secondary: #b8b8b8;
+  --text-muted: #949494;
+
+  --border: #404040;
+
+  --button-background: #1f2937;
+  --button-text: #ffffff;
+
+  --card-shadow: 0 12px 30px rgb(0 0 0 / 25%);
+
+  --level-badge-background: #1f2937;
+  --level-badge-text: #ffffff;
+
+  --progress-track: #374151;
+  --progress-fill: linear-gradient(90deg, #3b82f6, #8b5cf6);
+
+  --checkbox-accent: #22c55e;
+  --quest-xp: #a78bfa;
+  
+  --success-text: #4ade80;
+
+  --pill-background: #312e81;
+  --pill-text: #c4b5fd; 
+
+  --dialog-shadow: 0 24px 70px rgb(0 0 0 / 55%);
+  --dialog-backdrop: rgb(0 0 0 / 70%);
+}
+
+html {
+  background-color: var(--background);
+  color: var(--text-primary);
 }
 
 * { box-sizing: border-box; }
@@ -10,7 +120,6 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #dbeafe 0, #eef2f7 280px);
 }
 
 button, textarea, input { font: inherit; }
@@ -19,16 +128,16 @@ button {
   border: 0;
   border-radius: 12px;
   padding: .8rem 1rem;
-  background: #1f2937;
-  color: white;
+  background: var(--button-background);
+  color: var(--button-text);
   font-weight: 700;
   cursor: pointer;
 }
 
 button:active { transform: translateY(1px); }
-button.secondary { background: #e5e7eb; color: #1f2937; }
-button.danger { background: #991b1b; }
-button.text-btn { background: transparent; color: #334155; padding: .4rem; }
+button.secondary { background: var(--secondary-action); color: var(--secondary-action-text); }
+button.danger { background: var(--danger-action); color: var(--danger-action-text); }
+button.text-btn { background: transparent; color: var(--text-secondary); padding: .4rem; }
 .hidden { display: none !important; }
 
 .hero {
@@ -50,19 +159,19 @@ main {
 }
 
 .card {
-  background: rgba(255,255,255,.96);
-  border: 1px solid rgba(148,163,184,.25);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 1.15rem;
   margin-bottom: 1rem;
-  box-shadow: 0 12px 30px rgba(15,23,42,.07);
+  box-shadow: var(--card-shadow);
 }
 
 h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
-.eyebrow { text-transform: uppercase; letter-spacing: .11em; font-size: .72rem; font-weight: 800; color: #64748b; margin: 0; }
-.muted { color: #64748b; line-height: 1.45; }
+.eyebrow { text-transform: uppercase; letter-spacing: .11em; font-size: .72rem; font-weight: 800; color: var(--text-muted); margin: 0; }
+.muted { color: var(--text-muted); line-height: 1.45; }
 .small { font-size: .85rem; }
-.rank { margin: .15rem 0 0; font-weight: 700; color: #475569; }
+.rank { margin: .15rem 0 0; font-weight: 700; color: var(--text-secondary); }
 
 .row { display: flex; align-items: center; gap: .75rem; }
 .between { justify-content: space-between; }
@@ -71,8 +180,8 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   width: 76px;
   height: 76px;
   border-radius: 18px;
-  background: #1f2937;
-  color: white;
+  background: var(--level-badge-background);
+  color: var(--level-badge-text);
   display: grid;
   place-content: center;
   text-align: center;
@@ -83,14 +192,14 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
 .progress-wrap { margin-top: 1rem; }
 .progress {
   height: 12px;
-  background: #e2e8f0;
+  background: var(--progress-track);
   border-radius: 999px;
   overflow: hidden;
 }
 .progress-bar {
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #2563eb, #7c3aed);
+  background: var(--progress-fill);
   transition: width .25s ease;
 }
 
@@ -101,13 +210,13 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   margin-top: 1rem;
 }
 .stats-grid div {
-  background: #f8fafc;
+  background: var(--surface-interactive);
   border-radius: 14px;
   padding: .8rem .5rem;
   text-align: center;
 }
 .stats-grid strong { display: block; font-size: 1.15rem; }
-.stats-grid span { display: block; color: #64748b; font-size: .75rem; margin-top: .15rem; }
+.stats-grid span { display: block; color: var(--text-muted); font-size: .75rem; margin-top: .15rem; }
 
 .quest-list { display: grid; gap: .7rem; margin-top: 1rem; }
 
@@ -116,36 +225,36 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   grid-template-columns: auto 1fr auto;
   gap: .8rem;
   align-items: center;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: .85rem;
-  background: white;
+  background: var(--surface-interactive);
 }
 .quest.done {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
+  background: var(--success-surface);
+  border-color: var(--success-border);
 }
 .quest input {
   width: 24px;
   height: 24px;
-  accent-color: #16a34a;
+  accent-color: var(--checkbox-accent);
 }
 .quest-title { font-weight: 750; }
-.quest-xp { color: #7c3aed; font-weight: 800; font-size: .85rem; }
+.quest-xp { color: var(--quest-xp); font-weight: 800; font-size: .85rem; }
 
 textarea, input[type="text"], input[type="number"] {
   width: 100%;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--input-border);
   border-radius: 12px;
   padding: .8rem;
-  background: white;
-  color: #172033;
+  background: var(--input-background);
+  color: var(--text-primary);
 }
 
 textarea { resize: vertical; margin: .45rem 0 .7rem; }
-label { display: block; margin-top: .8rem; font-weight: 700; color: #334155; }
+label { display: block; margin-top: .8rem; font-weight: 700; color: var(--text-primary); }
 
-.success { color: #15803d; font-weight: 700; }
+.success { color: var(--success-text); font-weight: 700; }
 
 .week-grid {
   display: grid;
@@ -158,17 +267,18 @@ label { display: block; margin-top: .8rem; font-weight: 700; color: #334155; }
   padding: .65rem .25rem;
   border-radius: 12px;
   text-align: center;
-  background: #f1f5f9;
+  background: var(--surface-interactive);
 }
 .day-cell strong, .day-cell span { display: block; }
 .day-cell strong { font-size: .75rem; }
-.day-cell span { font-size: .72rem; color: #64748b; margin-top: .3rem; }
+.day-cell span { font-size: .72rem; color: var(--text-muted); margin-top: .3rem; }
+.day-cell.active span { color: var(--text-primary);}
 
 .pill {
   display: inline-flex;
   align-items: center;
-  background: #ede9fe;
-  color: #6d28d9;
+  background: var(--pill-background);
+  color: var(--pill-text);
   border-radius: 999px;
   padding: .35rem .65rem;
   font-weight: 800;
@@ -183,9 +293,11 @@ dialog {
   border: 0;
   border-radius: 20px;
   padding: 0;
-  box-shadow: 0 24px 70px rgba(15,23,42,.3);
+  box-shadow: var(--dialog-shadow);
+  background: var(--surface);
+  color: var(--text-primary);
 }
-dialog::backdrop { background: rgba(15,23,42,.55); }
+dialog::backdrop { background: var(--dialog-backdrop); }
 dialog form { padding: 1rem; }
 .editor-row {
   display: grid;
@@ -202,9 +314,34 @@ menu {
   margin: 1rem 0 0;
 }
 
+#questForm {
+  background-color: var(--surface);
+}
+
+#questEditor input[type="text"]:focus,
+#questEditor input[type="number"]:focus {
+  border-color: var(--focus);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+#saveQuestsBtn {
+  background-color: var(--primary-action);
+  color: var(--primary-action-text);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 520px) {
   .stats-grid { grid-template-columns: 1fr 1fr 1fr; }
   .editor-row { grid-template-columns: 1fr 72px; }
   .editor-row button { grid-column: 1 / -1; }
   .hero { padding-top: 1.2rem; }
+  .hero-actions {flex-direction: column;align-items: flex-end; }
 }

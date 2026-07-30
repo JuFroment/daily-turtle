@@ -1,4 +1,6 @@
 const STORAGE_KEY = "julien-rpg-tracker-v1";
+const THEME_KEY = "daily-turtle-theme";
+const savedTheme = localStorage.getItem(THEME_KEY) || "dark";
 
 const defaultState = {
   quests: [
@@ -35,6 +37,29 @@ function loadState() {
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
+
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+  const button = document.querySelector("#themeToggle");
+
+  document.documentElement.classList.toggle("dark", isDark);
+
+  const backgroundColor = getComputedStyle(document.documentElement)
+    .getPropertyValue("--background")
+    .trim();
+
+  document
+    .querySelector('meta[name="theme-color"]')
+    .setAttribute("content", backgroundColor);
+
+  button.textContent = isDark ? "☀ Mode clair" : "🌙 Mode sombre";
+  button.setAttribute(
+    "aria-label",
+    isDark ? "Activer le thème clair" : "Activer le thème sombre"
+  );
+}
+
+applyTheme(savedTheme);
 
 function dateKey(date = new Date()) {
   return date.toISOString().slice(0, 10);
@@ -137,7 +162,12 @@ function renderWeek() {
     const percent = state.quests.length ? Math.round((count / state.quests.length) * 100) : 0;
     const cell = document.createElement("div");
     cell.className = "day-cell";
-    cell.style.background = `rgba(34, 197, 94, ${0.08 + percent / 180})`;
+    const opacity = 0.08 + percent / 180;
+
+    if (percent > 0) {
+      cell.classList.add("active");
+      cell.style.background = `rgb(var(--activity-rgb) / ${opacity})`;
+    }
     cell.innerHTML = `
       <strong>${date.toLocaleDateString("fr-FR", { weekday: "short" }).replace(".", "")}</strong>
       <span>${count}/${state.quests.length}</span>`;
@@ -256,6 +286,16 @@ window.addEventListener("beforeinstallprompt", event => {
   event.preventDefault();
   deferredInstallPrompt = event;
   document.querySelector("#installBtn").classList.remove("hidden");
+});
+
+document.querySelector("#themeToggle").addEventListener("click", () => {
+  const isCurrentlyDark =
+    document.documentElement.classList.contains("dark");
+
+  const nextTheme = isCurrentlyDark ? "light" : "dark";
+
+  localStorage.setItem(THEME_KEY, nextTheme);
+  applyTheme(nextTheme);
 });
 
 document.querySelector("#installBtn").addEventListener("click", async () => {
