@@ -1,5 +1,16 @@
-const CACHE = "quete-quotidien-v1";
-const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg"];
+const CACHE = "Daily_Turtle-v4";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./css/styles.css",
+  "./js/app.js",
+  "./manifest.json",
+  "./assets/icon.svg",
+  "./assets/fonts/victor-pixel.ttf",
+  "./assets/fonts/Kalam-Regular.ttf",
+  "./assets/fonts/ChakraPetch-Regular.ttf",
+  "./assets/fonts/ChakraPetch-SemiBold.ttf"
+];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
