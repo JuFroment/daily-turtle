@@ -1,6 +1,6 @@
 const STORAGE_KEY = "julien-rpg-tracker-v1";
 const THEME_KEY = "daily-turtle-theme";
-const savedTheme = localStorage.getItem(THEME_KEY) || "dark";
+const savedTheme = localStorage.getItem(THEME_KEY) || "light";
 
 const defaultState = {
   profileName: "Julien",
