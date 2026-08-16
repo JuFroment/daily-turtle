@@ -13,7 +13,8 @@ const defaultState = {
     { id: crypto.randomUUID(), title: "Faire une pause avant de lancer le PC", xp: 10 }
   ],
   days: {},
-  reviews: {}
+  reviews: {},
+  backlog: []
 };
 
 let state = loadState();
@@ -28,7 +29,8 @@ function loadState() {
       ...saved,
       quests: saved.quests?.length ? saved.quests : structuredClone(defaultState.quests),
       days: saved.days || {},
-      reviews: saved.reviews || {}
+      reviews: saved.reviews || {},
+      backlog: saved.backlog || []
     };
   } catch {
     return structuredClone(defaultState);
@@ -143,6 +145,7 @@ function render() {
   document.querySelector("#initiativeNote").value = day.initiative || "";
   renderWeek();
   loadReview();
+  renderBacklog();
 }
 
 function daysSinceFirstUse() {
@@ -189,6 +192,40 @@ function renderWeek() {
 
   document.querySelector("#weekPercent").textContent =
     possible ? `${Math.round((completed / possible) * 100)} %` : "0 %";
+}
+
+function renderBacklog() {
+  const activeList = document.querySelector("#backlogActive");
+  const doneList = document.querySelector("#backlogDone");
+  const doneSection = document.querySelector("#backlogDoneSection");
+  activeList.innerHTML = "";
+  doneList.innerHTML = "";
+
+  const renderItem = (item, container) => {
+    const row = document.createElement("div");
+    row.className = `backlog-item ${item.done ? "done" : ""}`;
+    row.innerHTML = `
+      <label>
+        <input type="checkbox" ${item.done ? "checked" : ""} aria-label="${escapeHtml(item.title)}" />
+        <span>${escapeHtml(item.title)}</span>
+      </label>
+      <button type="button" class="text-btn" aria-label="Supprimer">✕</button>`;
+    row.querySelector("input").addEventListener("change", event => {
+      item.done = event.target.checked;
+      saveState();
+      renderBacklog();
+    });
+    row.querySelector("button").addEventListener("click", () => {
+      state.backlog = state.backlog.filter(entry => entry.id !== item.id);
+      saveState();
+      renderBacklog();
+    });
+    container.appendChild(row);
+  };
+
+  state.backlog.forEach(item => renderItem(item, item.done ? doneList : activeList));
+
+  doneSection.classList.toggle("hidden", doneList.children.length === 0);
 }
 
 function reviewKey() {
@@ -270,6 +307,17 @@ document.querySelector("#saveNoteBtn").addEventListener("click", () => {
   const feedback = document.querySelector("#noteSaved");
   feedback.classList.remove("hidden");
   setTimeout(() => feedback.classList.add("hidden"), 1600);
+});
+
+document.querySelector("#backlogForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const input = document.querySelector("#backlogInput");
+  const title = input.value.trim();
+  if (!title) return;
+  state.backlog.push({ id: crypto.randomUUID(), title, done: false });
+  input.value = "";
+  saveState();
+  renderBacklog();
 });
 
 document.querySelector("#saveReviewBtn").addEventListener("click", () => {

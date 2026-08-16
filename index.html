@@ -75,6 +75,21 @@
       <div id="questList" class="quest-list"></div>
     </section>
 
+    <section class="card" aria-labelledby="backlogTitle">
+      <p class="eyebrow">Sans pression</p>
+      <h2 id="backlogTitle">La carapace à idées</h2>
+      <p class="muted encouragement">Note ce qui te passe par la tête, sans obligation de le faire aujourd'hui.</p>
+      <form id="backlogForm" class="backlog-form">
+        <input type="text" id="backlogInput" placeholder="Ex. Trier les vieux vêtements, essayer une nouvelle recette…" />
+        <button type="submit">Ajouter</button>
+      </form>
+      <div id="backlogActive" class="backlog-list"></div>
+      <div id="backlogDoneSection" class="backlog-done-section hidden">
+        <p class="backlog-done-label">Archivé dans la carapace !</p>
+        <div id="backlogDone" class="backlog-list"></div>
+      </div>
+    </section>
+
     <section class="card" aria-labelledby="initiativeTitle">
       <p class="eyebrow">Trace d'initiative</p>
       <h2 id="initiativeTitle">Qu'ai-je lancé aujourd'hui ?</h2>
