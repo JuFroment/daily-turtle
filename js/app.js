@@ -145,13 +145,24 @@ function render() {
   loadReview();
 }
 
+function daysSinceFirstUse() {
+  const keys = Object.keys(state.days).sort();
+  if (!keys.length) return 1;
+  const first = new Date(keys[0]);
+  const today = new Date();
+  const diffDays = Math.floor((today - first) / 86400000);
+  return diffDays + 1;
+}
+
 function renderWeek() {
   const grid = document.querySelector("#weekGrid");
   grid.innerHTML = "";
   let completed = 0;
   let possible = 0;
 
-  for (let offset = 6; offset >= 0; offset--) {
+  const visibleDays = Math.min(daysSinceFirstUse(), 7);
+
+  for (let offset = visibleDays - 1; offset >= 0; offset--) {
     const date = new Date();
     date.setDate(date.getDate() - offset);
     const key = dateKey(date);
@@ -163,6 +174,7 @@ function renderWeek() {
     const percent = state.quests.length ? Math.round((count / state.quests.length) * 100) : 0;
     const cell = document.createElement("div");
     cell.className = "day-cell";
+    if (offset === 0) cell.classList.add("today");
     const opacity = 0.08 + percent / 180;
 
     if (percent > 0) {
