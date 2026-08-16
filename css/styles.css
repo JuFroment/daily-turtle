@@ -338,6 +338,52 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
 .quest-title { font-weight: 600; }
 .quest-xp { color: var(--quest-xp); font-weight: 800; font-size: .85rem; }
 
+.backlog-form {
+  display: flex;
+  gap: .6rem;
+  margin-top: 1rem;
+}
+.backlog-form input { flex: 1; }
+
+.backlog-list { display: flex; flex-direction: column; }
+
+.backlog-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .6rem;
+  padding: .6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.backlog-item:last-child { border-bottom: none; }
+
+.backlog-item label {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  cursor: pointer;
+}
+.backlog-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--checkbox-accent);
+}
+.backlog-item.done span {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.backlog-item button { opacity: .5; }
+.backlog-item button:hover { opacity: 1; }
+
+.backlog-done-section { margin-top: 1.2rem; }
+.backlog-done-label {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin-bottom: .4rem;
+}
+
 textarea, input[type="text"], input[type="number"] {
   width: 100%;
   border: 1px solid var(--input-border);
