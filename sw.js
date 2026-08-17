@@ -6,6 +6,8 @@ const ASSETS = [
   "./js/app.js",
   "./manifest.json",
   "./assets/icon.svg",
+  "./assets/icon-192.png",
+  "./assets/icon-512.png",
   "./assets/fonts/victor-pixel.ttf",
   "./assets/fonts/Kalam-Regular.ttf",
   "./assets/fonts/ChakraPetch-Regular.ttf",

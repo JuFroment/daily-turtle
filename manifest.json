@@ -1,6 +1,6 @@
 {
   "name": "Daily Turtle",
-  "short_name": "Quêtes",
+  "short_name": "Daily Turtle",
   "description": "Suivi RPG quotidien pour prendre soin de soi, du couple et de la maison.",
   "start_url": "./",
   "display": "standalone",
@@ -12,6 +12,18 @@
       "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
