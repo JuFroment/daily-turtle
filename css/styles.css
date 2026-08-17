@@ -231,6 +231,40 @@ main {
   box-shadow: var(--card-shadow);
 }
 
+.journal-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.4rem 0;
+}
+
+.journal-filters {
+  display: flex;
+  gap: .5rem;
+  margin: 1rem 0;
+}
+.journal-filter-btn {
+  background: var(--secondary-action);
+  color: var(--secondary-action-text);
+  padding: .5rem .9rem;
+  font-size: .85rem;
+}
+.journal-filter-btn.active {
+  background: var(--button-background);
+  color: var(--button-text);
+}
+
+.journal-list { display: flex; flex-direction: column; gap: .8rem; }
+
+.journal-entry {
+  border-left: 3px solid var(--border);
+  padding-left: .8rem;
+}
+.journal-entry-title {
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: .3rem;
+}
+
 h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
 .eyebrow { 
   text-transform: uppercase; 
