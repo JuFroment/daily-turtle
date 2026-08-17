@@ -19,6 +19,8 @@ const defaultState = {
 
 let state = loadState();
 let deferredInstallPrompt = null;
+let journalPeriod = "today";
+let journalCollapsed = false;
 
 function loadState() {
   try {
@@ -146,6 +148,7 @@ function render() {
   renderWeek();
   loadReview();
   renderBacklog();
+  renderJournal();
 }
 
 function daysSinceFirstUse() {
@@ -228,11 +231,24 @@ function renderBacklog() {
   doneSection.classList.toggle("hidden", doneList.children.length === 0);
 }
 
-function reviewKey() {
-  const now = new Date();
-  const yearStart = new Date(now.getFullYear(), 0, 1);
-  const week = Math.ceil((((now - yearStart) / 86400000) + yearStart.getDay() + 1) / 7);
-  return `${now.getFullYear()}-S${week}`;
+function reviewKey(date = new Date()) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = (d.getUTCDay() + 6) % 7; // lundi = 0
+  d.setUTCDate(d.getUTCDate() - dayNum + 3); // jeudi de cette semaine
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  const firstThursdayDayNum = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstThursdayDayNum + 3);
+  const week = 1 + Math.round((d - firstThursday) / (7 * 86400000));
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+function startOfIsoWeek(weekKey) {
+  const [year, week] = weekKey.split("-W").map(Number);
+  const jan4 = new Date(Date.UTC(year, 0, 4));
+  const jan4DayNum = (jan4.getUTCDay() + 6) % 7;
+  const monday = new Date(jan4);
+  monday.setUTCDate(jan4.getUTCDate() - jan4DayNum + (week - 1) * 7);
+  return monday;
 }
 
 function loadReview() {
@@ -240,6 +256,112 @@ function loadReview() {
   document.querySelector("#proudInput").value = review.proud || "";
   document.querySelector("#obstacleInput").value = review.obstacle || "";
   document.querySelector("#priorityInput").value = review.priority || "";
+}
+
+function getPeriodStart(period) {
+  const now = new Date();
+  if (period === "month") return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  if (period === "year") return new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+
+  const cutoff = new Date();
+  cutoff.setUTCHours(0, 0, 0, 0);
+  cutoff.setUTCDate(cutoff.getUTCDate() - (period === "week" ? 7 : 0));
+  return cutoff;
+}
+
+function dailyChronicleTitle(dateStr) {
+  const date = new Date(dateStr);
+  return `Chronique du ${date.toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}`;
+}
+
+function weeklyChronicleTitle(mondayDateStr) {
+  const monday = new Date(mondayDateStr);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+
+  const sameMonth = monday.getMonth() === sunday.getMonth();
+  const mondayLabel = monday.toLocaleDateString(
+    "fr-FR",
+    sameMonth ? { day: "numeric" } : { day: "numeric", month: "long" }
+  );
+  const sundayLabel = sunday.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+
+  return `Chronique du ${mondayLabel} au ${sundayLabel}`;
+}
+
+function periodChronicleTitle(period) {
+  const now = new Date();
+  if (period === "month") {
+    const monthName = now.toLocaleDateString("fr-FR", { month: "long" });
+    const prefix = /^[aeiouéèêëàâäîïôöûü]/i.test(monthName) ? "d'" : "de ";
+    return `Chronique du mois ${prefix}${monthName}`;
+  }
+  return `Chronique de l'année ${now.getFullYear()}`;
+}
+
+function getPeriodSummary(period) {
+  const cutoff = getPeriodStart(period);
+  let activeDays = 0;
+  let xp = 0;
+
+  Object.entries(state.days).forEach(([key, day]) => {
+    if (new Date(key) < cutoff) return;
+    const completed = day.completed || [];
+    if (completed.length) activeDays++;
+    xp += completed.reduce((sum, id) => {
+      const quest = state.quests.find(q => q.id === id);
+      return sum + (quest?.xp || 0);
+    }, 0);
+  });
+
+  const reviewsCount = Object.keys(state.reviews)
+    .filter(key => startOfIsoWeek(key) >= cutoff).length;
+
+  return { activeDays, xp, reviewsCount };
+}
+
+function renderJournal() {
+  const list = document.querySelector("#journalList");
+  list.classList.toggle("hidden", journalCollapsed);
+  if (journalCollapsed) return;
+
+  list.innerHTML = "";
+  const item = document.createElement("div");
+  item.className = "journal-entry";
+
+  if (journalPeriod === "today") {
+    const today = currentDay();
+    if (today.initiative) {
+      item.innerHTML = `
+        <p class="journal-entry-title">${dailyChronicleTitle(dateKey())}</p>
+        <p>${escapeHtml(today.initiative)}</p>`;
+    } else {
+      item.innerHTML = `<p class="muted">Rien à afficher pour aujourd'hui.</p>`;
+    }
+  } else if (journalPeriod === "week") {
+    const key = reviewKey();
+    const review = state.reviews[key];
+    if (review) {
+      item.innerHTML = `
+        <p class="journal-entry-title">${weeklyChronicleTitle(startOfIsoWeek(key).toISOString().slice(0, 10))}</p>
+        <p><strong>Fierté :</strong> ${escapeHtml(review.proud || "—")}</p>
+        <p><strong>Obstacle :</strong> ${escapeHtml(review.obstacle || "—")}</p>
+        <p><strong>Priorité :</strong> ${escapeHtml(review.priority || "—")}</p>`;
+    } else {
+      item.innerHTML = `<p class="muted">Rien à afficher pour cette semaine.</p>`;
+    }
+  } else {
+    const summary = getPeriodSummary(journalPeriod);
+    item.innerHTML = `
+      <p class="journal-entry-title">${periodChronicleTitle(journalPeriod)}</p>
+      <p>${summary.activeDays} jour(s) actif(s), ${summary.reviewsCount} bilan(s) hebdo, ${summary.xp} XP gagné.</p>`;
+  }
+
+  list.appendChild(item);
+}
+
+function monthKey(date = new Date()) {
+  return date.toISOString().slice(0, 7); // "2026-08"
 }
 
 function openQuestEditor() {
@@ -330,6 +452,23 @@ document.querySelector("#saveReviewBtn").addEventListener("click", () => {
   const feedback = document.querySelector("#reviewSaved");
   feedback.classList.remove("hidden");
   setTimeout(() => feedback.classList.add("hidden"), 1600);
+});
+
+document.querySelectorAll(".journal-filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const alreadyActive = btn.classList.contains("active");
+
+    if (alreadyActive) {
+      journalCollapsed = !journalCollapsed;
+    } else {
+      document.querySelectorAll(".journal-filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      journalPeriod = btn.dataset.period;
+      journalCollapsed = false;
+    }
+
+    renderJournal();
+  });
 });
 
 document.querySelector("#editQuestsBtn").addEventListener("click", openQuestEditor);

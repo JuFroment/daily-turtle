@@ -90,14 +90,6 @@
       </div>
     </section>
 
-    <section class="card" aria-labelledby="initiativeTitle">
-      <p class="eyebrow">Trace d'initiative</p>
-      <h2 id="initiativeTitle">Qu'ai-je lancé aujourd'hui ?</h2>
-      <textarea id="initiativeNote" rows="3" placeholder="Ex. J'ai proposé une balade, lancé une lessive, cherché une idée pour le salon…"></textarea>
-      <button id="saveNoteBtn" type="button">Enregistrer</button>
-      <p id="noteSaved" class="success hidden">Enregistré.</p>
-    </section>
-
     <section class="card" aria-labelledby="weekTitle">
       <div class="row between">
         <div>
@@ -109,9 +101,20 @@
       <div id="weekGrid" class="week-grid"></div>
     </section>
 
-    <section class="card" aria-labelledby="reviewTitle">
-      <p class="eyebrow">Bilan hebdomadaire</p>
-      <h2 id="reviewTitle">Prendre du recul</h2>
+    <section class="card" aria-labelledby="journalTitle">
+      <p class="eyebrow">Journal de bord</p>
+      <h2 id="journalTitle">Journal de bord</h2>
+    
+      <label>
+        Qu'ai-je accompli aujourd'hui ?
+        <textarea id="initiativeNote" rows="3"
+          placeholder="Ex. J'ai proposé une balade, lancé une lessive, cherché une idée pour le salon…"></textarea>
+      </label>
+      <button id="saveNoteBtn" type="button">Enregistrer</button>
+      <p id="noteSaved" class="success hidden">Enregistré.</p>
+    
+      <hr class="journal-divider" />
+    
       <label>
         Cette semaine, je suis fier de…
         <textarea id="proudInput" rows="2"></textarea>
@@ -126,6 +129,15 @@
       </label>
       <button id="saveReviewBtn" type="button">Enregistrer le bilan</button>
       <p id="reviewSaved" class="success hidden">Bilan enregistré.</p>
+      <hr class="journal-divider" />
+
+      <div class="journal-filters" role="group" aria-label="Filtrer l'historique">
+        <button type="button" class="journal-filter-btn active" data-period="today">Aujourd'hui</button>
+        <button type="button" class="journal-filter-btn" data-period="week">1 semaine</button>
+        <button type="button" class="journal-filter-btn" data-period="month">1 mois</button>
+        <button type="button" class="journal-filter-btn" data-period="year">1 an</button>
+      </div>
+      <div id="journalList" class="journal-list"></div>
     </section>
 
     <section class="card danger-zone">
