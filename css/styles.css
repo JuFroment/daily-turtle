@@ -372,6 +372,97 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
 .quest-title { font-weight: 600; }
 .quest-xp { color: var(--quest-xp); font-weight: 800; font-size: .85rem; }
 
+.category-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+  border: 0;
+  border-radius: 0;
+  padding: .9rem 1.1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.category-list { display: flex; flex-direction: column; gap: .8rem; margin-top: 1rem; }
+
+.category-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.category-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-interactive);
+  border: 0;
+  border-radius: 0;
+  padding: .9rem 1.1rem;
+  cursor: pointer;
+  text-align: left;
+}
+.category-name { font-weight: 700; }
+.category-level {
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+
+.category-body {
+  padding: 1rem 1.1rem;
+}
+.category-description {
+  margin-bottom: .8rem;
+}
+
+.category-editor-group {
+  background: var(--surface-interactive);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+.category-editor-group .category-name-input {
+  font-weight: 700;
+  font-size: 1.05rem;
+  width: auto;
+  flex: 1;
+  margin-right: .6rem;
+}
+.category-editor-group .category-description-input {
+  margin-top: .6rem;
+}
+
+.category-quest-editor {
+  margin-top: .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.category-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  flex: 1;
+}
+.category-mini-progress {
+  width: 120px;
+  height: 4px;
+  background: var(--progress-track);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.category-mini-progress-bar {
+  height: 100%;
+  background: var(--progress-fill);
+  transition: width .25s ease;
+}
+
 .backlog-form {
   display: flex;
   gap: .6rem;

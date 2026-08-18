@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="fr" class="dark">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -9,6 +10,7 @@
   <link rel="stylesheet" href="css/styles.css" />
   <title>Daily Turtle</title>
 </head>
+
 <body>
   <header class="hero">
     <div>
@@ -16,15 +18,15 @@
       <h1>Daily Turtle</h1>
       <p id="todayLabel" class="muted"></p>
     </div>
-      <div class="hero-actions">
-    <button id="themeToggle" class="text-btn" type="button">
-      ☀ Mode clair
-    </button>
+    <div class="hero-actions">
+      <button id="themeToggle" class="text-btn" type="button">
+        ☀ Mode clair
+      </button>
 
-    <button id="installBtn" class="secondary hidden" type="button">
-      Installer
-    </button>
-  </div>
+      <button id="installBtn" class="secondary hidden" type="button">
+        Installer
+      </button>
+    </div>
   </header>
 
   <main>
@@ -34,7 +36,8 @@
           <p class="eyebrow">Profil</p>
           <div class="profile-heading">
             <h2 id="playerTitle">Julien</h2>
-            <button id="editProfileBtn" class="text-btn" type="button" aria-label="Modifier le nom du profil" title="Modifier le nom du profil">
+            <button id="editProfileBtn" class="text-btn" type="button" aria-label="Modifier le nom du profil"
+              title="Modifier le nom du profil">
               <span aria-hidden="true">✎</span>
             </button>
           </div>
@@ -72,7 +75,7 @@
         <button id="editQuestsBtn" class="text-btn" type="button">Modifier</button>
       </div>
       <p class="muted encouragement">Une journée imparfaite compte quand même. Le but est de revenir, pas d'être parfait.</p>
-      <div id="questList" class="quest-list"></div>
+      <div id="categoryList" class="category-list"></div>
     </section>
 
     <section class="card" aria-labelledby="backlogTitle">
@@ -80,7 +83,8 @@
       <h2 id="backlogTitle">La carapace à idées</h2>
       <p class="muted encouragement">Note ce qui te passe par la tête, sans obligation de le faire aujourd'hui.</p>
       <form id="backlogForm" class="backlog-form">
-        <input type="text" id="backlogInput" placeholder="Ex. Trier les vieux vêtements, essayer une nouvelle recette…" />
+        <input type="text" id="backlogInput"
+          placeholder="Ex. Trier les vieux vêtements, essayer une nouvelle recette…" />
         <button type="submit">Ajouter</button>
       </form>
       <div id="backlogActive" class="backlog-list"></div>
@@ -103,8 +107,8 @@
 
     <section class="card" aria-labelledby="journalTitle">
       <p class="eyebrow">Journal de bord</p>
-      <h2 id="journalTitle">Journal de bord</h2>
-    
+      <h2 id="journalTitle">Écrire sa chronique</h2>
+
       <label>
         Qu'ai-je accompli aujourd'hui ?
         <textarea id="initiativeNote" rows="3"
@@ -112,9 +116,9 @@
       </label>
       <button id="saveNoteBtn" type="button">Enregistrer</button>
       <p id="noteSaved" class="success hidden">Enregistré.</p>
-    
+
       <hr class="journal-divider" />
-    
+
       <label>
         Cette semaine, je suis fier de…
         <textarea id="proudInput" rows="2"></textarea>
@@ -152,43 +156,33 @@
     </section>
   </main>
 
-<dialog id="profileDialog">
-  <form method="dialog" id="profileForm">
-    <div class="row between">
-      <h2>Modifier le profil</h2>
-      <button
-        value="cancel"
-        class="text-btn"
-        aria-label="Fermer"
-      >
-        Fermer
-      </button>
-    </div>
+  <dialog id="profileDialog">
+    <form method="dialog" id="profileForm">
+      <div class="row between">
+        <h2>Modifier le profil</h2>
+        <button value="cancel" class="text-btn" aria-label="Fermer">
+          Fermer
+        </button>
+      </div>
 
-    <label for="profileNameInput">Nom du profil</label>
-    <input
-      id="profileNameInput"
-      type="text"
-      maxlength="50"
-      autocomplete="name"
-      required
-    />
+      <label for="profileNameInput">Nom du profil</label>
+      <input id="profileNameInput" type="text" maxlength="50" autocomplete="name" required />
 
-    <menu>
-      <button value="cancel" class="secondary">Annuler</button>
-      <button value="default">Enregistrer</button>
-    </menu>
-  </form>
-</dialog>
+      <menu>
+        <button value="cancel" class="secondary">Annuler</button>
+        <button value="default">Enregistrer</button>
+      </menu>
+    </form>
+  </dialog>
 
   <dialog id="questDialog">
     <form method="dialog" id="questForm">
       <div class="row between">
-        <h2>Modifier les quêtes</h2>
+        <h2>Modifier les catégories et quêtes</h2>
         <button value="cancel" class="text-btn" aria-label="Fermer">Fermer</button>
       </div>
-      <div id="questEditor"></div>
-      <button id="addQuestBtn" class="secondary" type="button">Ajouter une quête</button>
+      <div id="categoryEditor"></div>
+      <button id="addCategoryBtn" class="secondary" type="button">Ajouter une catégorie</button>
       <menu>
         <button value="cancel" class="secondary">Annuler</button>
         <button id="saveQuestsBtn" value="default">Enregistrer</button>
@@ -198,4 +192,5 @@
 
   <script src="js/app.js"></script>
 </body>
+
 </html>
