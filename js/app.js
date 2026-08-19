@@ -16,7 +16,7 @@ const defaultState = {
     { id: crypto.randomUUID(), title: "Prendre une douche", xp: 15, categoryId: defaultCategories[1].id },
     { id: crypto.randomUUID(), title: "Porter des vêtements propres et en bon état", xp: 10, categoryId: defaultCategories[1].id },
     { id: crypto.randomUUID(), title: "Faire une action pour la maison", xp: 15, categoryId: defaultCategories[0].id },
-    { id: crypto.randomUUID(), title: "Créer un moment complice avec Morgan et les toutous", xp: 20, categoryId: defaultCategories[3].id },
+    { id: crypto.randomUUID(), title: "Créer un moment complice avec son·sa chéri·e", xp: 20, categoryId: defaultCategories[3].id },
     { id: crypto.randomUUID(), title: "Manger au moins un repas équilibré", xp: 15, categoryId: defaultCategories[1].id },
     { id: crypto.randomUUID(), title: "Faire une pause avant de lancer le PC", xp: 10, categoryId: defaultCategories[2].id }
   ],
@@ -29,7 +29,7 @@ const TITLE_TO_CATEGORY = {
   "Prendre une douche": "Corps",
   "Porter des vêtements propres et en bon état": "Corps",
   "Faire une action pour la maison": "Le Foyer",
-  "Créer un moment complice avec Morgan et les toutous": "Cercle proche",
+  "Créer un moment complice avec son·sa chéri·e": "Cercle proche",
   "Manger au moins un repas équilibré": "Corps",
   "Faire une pause avant de lancer le PC": "Esprit"
 };
