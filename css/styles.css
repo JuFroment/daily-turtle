@@ -386,7 +386,7 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   font-size: 1.05rem;
   width: auto;
   flex: 1;
-  min-width: 0;
+  min-width: 120px;
   margin-right: .6rem;
 }
 .category-editor-group > .row {
