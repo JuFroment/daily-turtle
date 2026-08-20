@@ -1,6 +1,4 @@
 const STORAGE_KEY = "julien-rpg-tracker-v1";
-const THEME_KEY = "daily-turtle-theme";
-const savedTheme = localStorage.getItem(THEME_KEY) || "light";
 
 const defaultCategories = [
   { id: crypto.randomUUID(), name: "Le Foyer", description: "Prendre soin de l'endroit où tu vis." },
@@ -73,29 +71,6 @@ function loadState() {
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
-
-function applyTheme(theme) {
-  const isDark = theme === "dark";
-  const button = document.querySelector("#themeToggle");
-
-  document.documentElement.classList.toggle("dark", isDark);
-
-  const backgroundColor = getComputedStyle(document.documentElement)
-    .getPropertyValue("--background")
-    .trim();
-
-  document
-    .querySelector('meta[name="theme-color"]')
-    .setAttribute("content", backgroundColor);
-
-  button.textContent = isDark ? "☀ Mode clair" : "🌙 Mode sombre";
-  button.setAttribute(
-    "aria-label",
-    isDark ? "Activer le thème clair" : "Activer le thème sombre"
-  );
-}
-
-applyTheme(savedTheme);
 
 function dateKey(date = new Date()) {
   return date.toISOString().slice(0, 10);
@@ -558,6 +533,7 @@ document.querySelector("#profileForm").addEventListener("submit", event => {
 document.querySelector("#saveNoteBtn").addEventListener("click", () => {
   currentDay().initiative = document.querySelector("#initiativeNote").value.trim();
   saveState();
+  renderJournal();
   const feedback = document.querySelector("#noteSaved");
   feedback.classList.remove("hidden");
   setTimeout(() => feedback.classList.add("hidden"), 1600);
@@ -581,6 +557,7 @@ document.querySelector("#saveReviewBtn").addEventListener("click", () => {
     priority: document.querySelector("#priorityInput").value.trim()
   };
   saveState();
+  renderJournal();
   const feedback = document.querySelector("#reviewSaved");
   feedback.classList.remove("hidden");
   setTimeout(() => feedback.classList.add("hidden"), 1600);
@@ -673,16 +650,6 @@ window.addEventListener("beforeinstallprompt", event => {
   event.preventDefault();
   deferredInstallPrompt = event;
   document.querySelector("#installBtn").classList.remove("hidden");
-});
-
-document.querySelector("#themeToggle").addEventListener("click", () => {
-  const isCurrentlyDark =
-    document.documentElement.classList.contains("dark");
-
-  const nextTheme = isCurrentlyDark ? "light" : "dark";
-
-  localStorage.setItem(THEME_KEY, nextTheme);
-  applyTheme(nextTheme);
 });
 
 document.querySelector("#installBtn").addEventListener("click", async () => {
