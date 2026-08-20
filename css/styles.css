@@ -33,26 +33,28 @@
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   --background: #eef2f7;
-  --surface: #ffffff;
-  --surface-interactive: #f1f5f9;
-  --activity-rgb: 34 197 94;
-  --success-surface: #f0fdf4;
-  --success-border: #86efac;
+  --surface: #F5EBD3;
+  --surface-interactive: #EFE1C3;
+  --activity-rgb: 184 134 11;
+  --success-surface: #E3EBC7;
+  --success-border: #9CAF5C;
+  --success-text: #4A5D23;
 
-  --input-background: #ffffff;
-  --input-border: #cbd5e1;
+  --input-background: #F0DFB4;
+  --input-border: #C9AD7E;
 
-  --primary-action: #4f46e5;
+
+  --primary-action: #B8860B;
   --primary-action-text: #ffffff;
 
   --secondary-action: #e5e7eb;
   --secondary-action-text: #1f2937;
 
-  --danger-action: #991b1b;
+  --danger-action: #7A2E22;
   --danger-action-text: #ffffff;
 
-  --focus: #6366f1;
-  --focus-ring: rgb(99 102 241 / 20%);
+  --focus: #C2622D;
+  --focus-ring: rgb(194 98 45 / 20%);
 
   --text-primary: #172033;
   --text-secondary: #475569;
@@ -60,27 +62,27 @@
 
   --border: #cbd5e1;
   
-  --button-background: #1f2937;
+  
+  --button-background: #4A3624;
   --button-text: #ffffff;
 
-  --card-shadow: 0 12px 30px rgb(15 23 42 / 7%);
+  --card-shadow: 0 12px 30px rgb(74 54 36 / 15%);
 
-  --level-badge-background: #1f2937;
+  --level-badge-background: #4A3624;
   --level-badge-text: #ffffff;
 
-  --progress-track: #e2e8f0;
-  --progress-fill: linear-gradient(90deg, #2563eb, #7c3aed);
+  --progress-track: #E8DBC0;
+  --progress-fill: linear-gradient(90deg, #92400E, #D4A017);
 
-  --checkbox-accent: #16a34a;
-  --quest-xp: #7c3aed;
+  --checkbox-accent: #6B8E23;
+  --quest-xp: #B5651D;
 
-  --success-text: #15803d;
 
-  --pill-background: #ede9fe;
-  --pill-text: #6d28d9;
+  --pill-background: #4A3624;
+  --pill-text: #F0DFB4;
 
-  --dialog-shadow: 0 24px 70px rgb(15 23 42 / 30%);
-  --dialog-backdrop: rgb(15 23 42 / 55%);
+  --dialog-shadow: 0 24px 70px rgb(74 54 36 / 30%);
+  --dialog-backdrop: rgb(74 54 36 / 55%);
 
 --font-system: Inter, ui-sans-serif, system-ui, -apple-system,
   BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -90,62 +92,6 @@
 --font-display: "Victor's Pixel Font", var(--font-body);
 
 font-family: var(--font-body);
-}
-
-html.dark {
-  /* Thème sombre */
-  color-scheme: dark;
-
-  --background: #212121;
-  --surface: #2d2d2d;
-  --surface-interactive: #1f2937;
-  --activity-rgb: 74 222 128;
-  --success-surface: #163d2a;
-  --success-border: #22c55e;
-
-  /* Modification des quêtes */
-  --input-background: #1f2937;
-  --input-border: #4b5563;
-
-  --primary-action: #4f46e5;
-  --primary-action-text: #ffffff;
-
-  --secondary-action: #374151;
-  --secondary-action-text: #ececec;
-
-  --danger-action: #991b1b;
-  --danger-action-text: #ffffff;
-
-  --focus: #818cf8;
-  --focus-ring: rgb(129 140 248 / 20%);
-
-  --text-primary: #ececec;
-  --text-secondary: #b8b8b8;
-  --text-muted: #949494;
-
-  --border: #404040;
-
-  --button-background: #1f2937;
-  --button-text: #ffffff;
-
-  --card-shadow: 0 12px 30px rgb(0 0 0 / 25%);
-
-  --level-badge-background: #1f2937;
-  --level-badge-text: #ffffff;
-
-  --progress-track: #374151;
-  --progress-fill: linear-gradient(90deg, #3b82f6, #8b5cf6);
-
-  --checkbox-accent: #22c55e;
-  --quest-xp: #a78bfa;
-  
-  --success-text: #4ade80;
-
-  --pill-background: #312e81;
-  --pill-text: #c4b5fd; 
-
-  --dialog-shadow: 0 24px 70px rgb(0 0 0 / 55%);
-  --dialog-backdrop: rgb(0 0 0 / 70%);
 }
 
 html {
@@ -158,6 +104,12 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  background-color: #C7AC80;
+  background-image: url("../assets/bg_parchment.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .danger-zone {
@@ -223,12 +175,13 @@ main {
 }
 
 .card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 1.15rem;
-  margin-bottom: 1rem;
-  box-shadow: var(--card-shadow);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 1.15rem 0;
+  margin-bottom: 1.5rem;
+  box-shadow: none;
 }
 
 .journal-divider {
@@ -344,6 +297,7 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   border-radius: 14px;
   padding: .8rem .5rem;
   text-align: center;
+  box-shadow: inset 0 3px 6px rgb(74 54 36 / 28%);
 }
 .stats-grid strong { display: block; font-size: 1.15rem; }
 .stats-grid span { display: block; color: var(--text-muted); font-size: .75rem; margin-top: .15rem; }
@@ -384,6 +338,7 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   padding: .9rem 1.1rem;
   cursor: pointer;
   text-align: left;
+  box-shadow: inset 0 3px 6px rgb(74 54 36 / 28%);
 }
 
 .category-list { display: flex; flex-direction: column; gap: .8rem; margin-top: 1rem; }
@@ -420,18 +375,22 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
 }
 
 .category-editor-group {
-  background: var(--surface-interactive);
-  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-interactive) 40%, transparent);
+  border: none;
   border-radius: 12px;
   padding: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
 }
 .category-editor-group .category-name-input {
   font-weight: 700;
   font-size: 1.05rem;
   width: auto;
   flex: 1;
+  min-width: 0;
   margin-right: .6rem;
+}
+.category-editor-group > .row {
+  flex-wrap: wrap;
 }
 .category-editor-group .category-description-input {
   margin-top: .6rem;
@@ -516,6 +475,7 @@ textarea, input[type="text"], input[type="number"] {
   padding: .8rem;
   background: var(--input-background);
   color: var(--text-primary);
+  box-shadow: 0 4px 10px rgb(74 54 36 / 25%);
 }
 
 textarea { resize: vertical; margin: .45rem 0 .7rem; }
@@ -581,7 +541,9 @@ dialog {
   border-radius: 20px;
   padding: 0;
   box-shadow: var(--dialog-shadow);
-  background: var(--surface);
+  background: linear-gradient(rgb(250 243 224 / 35%), rgb(250 243 224 / 35%)), url("../assets/bg_parchment.png");
+  background-size: cover;
+  background-position: center;
   color: var(--text-primary);
 }
 dialog::backdrop { background: var(--dialog-backdrop); }
@@ -599,10 +561,6 @@ menu {
   gap: .6rem;
   padding: 0;
   margin: 1rem 0 0;
-}
-
-#questForm {
-  background-color: var(--surface);
 }
 
 #questEditor input[type="text"]:focus,
