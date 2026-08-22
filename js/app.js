@@ -4,7 +4,6 @@ import {
   categoryXp,
   levelInfo,
   rankForLevel,
-  globalLevelUpCost,
   totalSkillPoints,
   globalLevelInfo
 } from "./logic.js";
@@ -162,6 +161,7 @@ function render() {
     today.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
   document.querySelector("#playerTitle").textContent = state.profileName;
   const totalXp = getTotalXp(state.days, state.quests);
+  document.querySelector("#totalXp").textContent = totalXp;
   const info = globalLevelInfo(totalSkillPoints(state.days, state.quests, state.categories));
   document.querySelector("#levelValue").textContent = info.level;
   document.querySelector("#rankLabel").textContent = rankForLevel(info.level);
@@ -390,10 +390,6 @@ function renderJournal() {
   }
 
   list.appendChild(item);
-}
-
-function monthKey(date = new Date()) {
-  return date.toISOString().slice(0, 7); // "2026-08"
 }
 
 function openQuestEditor() {
