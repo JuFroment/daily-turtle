@@ -1,0 +1,24 @@
+{
+  "name": "daily-turtle",
+  "version": "1.0.0",
+  "description": "A personal RPG-inspired habit tracker built as a Progressive Web App.",
+  "main": "sw.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuFroment/daily-turtle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/JuFroment/daily-turtle/issues"
+  },
+  "homepage": "https://github.com/JuFroment/daily-turtle#readme"
+}
