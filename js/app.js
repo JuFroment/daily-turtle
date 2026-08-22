@@ -1,3 +1,14 @@
+import {
+  dateKey,
+  getTotalXp,
+  categoryXp,
+  levelInfo,
+  rankForLevel,
+  globalLevelUpCost,
+  totalSkillPoints,
+  globalLevelInfo
+} from "./logic.js";
+
 const STORAGE_KEY = "julien-rpg-tracker-v1";
 
 const defaultCategories = [
@@ -72,70 +83,12 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function dateKey(date = new Date()) {
-  return date.toISOString().slice(0, 10);
-}
-
 function currentDay() {
   const key = dateKey();
   if (!state.days[key]) {
     state.days[key] = { completed: [], initiative: "" };
   }
   return state.days[key];
-}
-
-function getTotalXp() {
-  return Object.values(state.days).reduce((total, day) => {
-    return total + (day.completed || []).reduce((sum, questId) => {
-      const quest = state.quests.find(q => q.id === questId);
-      return sum + (quest?.xp || 0);
-    }, 0);
-  }, 0);
-}
-
-function categoryXp(categoryId) {
-  return Object.values(state.days).reduce((total, day) => {
-    return total + (day.completed || []).reduce((sum, questId) => {
-      const quest = state.quests.find(q => q.id === questId && q.categoryId === categoryId);
-      return sum + (quest?.xp || 0);
-    }, 0);
-  }, 0);
-}
-
-function levelInfo(totalXp) {
-  const xpPerLevel = 100;
-  const level = Math.floor(totalXp / xpPerLevel) + 1;
-  const current = totalXp % xpPerLevel;
-  return { level, current, needed: xpPerLevel, percent: current };
-}
-
-function rankForLevel(level) {
-  if (level >= 20) return "Gardien du foyer";
-  if (level >= 15) return "Compagnon fiable";
-  if (level >= 10) return "Bâtisseur du quotidien";
-  if (level >= 5) return "Aventurier constant";
-  return "Apprenti du quotidien";
-}
-
-function globalLevelUpCost(level) {
-  return 2 + Math.floor(level / 2);
-}
-
-function totalSkillPoints() {
-  return state.categories.reduce((sum, category) => {
-    return sum + (levelInfo(categoryXp(category.id)).level - 1);
-  }, 0);
-}
-
-function globalLevelInfo() {
-  let level = 1;
-  let remaining = totalSkillPoints();
-  while (remaining >= globalLevelUpCost(level)) {
-    remaining -= globalLevelUpCost(level);
-    level++;
-  }
-  const needed = globalLevelUpCost(level);
-  return { level, current: remaining, needed, percent: Math.round((remaining / needed) * 100) };
 }
 
 function renderCategories() {
@@ -145,7 +98,7 @@ function renderCategories() {
 
   state.categories.forEach(category => {
     const categoryQuests = state.quests.filter(q => q.categoryId === category.id);
-    const info = levelInfo(categoryXp(category.id));
+    const info = levelInfo(categoryXp(state.days, state.quests, category.id));
     const isExpanded = expandedCategoryId === category.id;
 
     const card = document.createElement("div");
@@ -208,8 +161,8 @@ function render() {
   document.querySelector("#todayLabel").textContent =
     today.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
   document.querySelector("#playerTitle").textContent = state.profileName;
-  const totalXp = getTotalXp();
-  const info = globalLevelInfo();
+  const totalXp = getTotalXp(state.days, state.quests);
+  const info = globalLevelInfo(totalSkillPoints(state.days, state.quests, state.categories));
   document.querySelector("#levelValue").textContent = info.level;
   document.querySelector("#rankLabel").textContent = rankForLevel(info.level);
   document.querySelector("#xpLabel").textContent = `${info.current} / ${info.needed} montées de compétence`;
