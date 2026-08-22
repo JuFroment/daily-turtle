@@ -12,20 +12,6 @@
   font-weight: 400;
   font-display: swap;
 }
-@font-face {
-  font-family: "Chakra Petch";
-  src: url("../assets/fonts/ChakraPetch-Regular.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Chakra Petch";
-  src: url("../assets/fonts/ChakraPetch-SemiBold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
 
 :root {
   /* Thème clair */
@@ -85,7 +71,7 @@
 --font-system: Inter, ui-sans-serif, system-ui, -apple-system,
   BlinkMacSystemFont, "Segoe UI", sans-serif;
 
---font-body: "Chakra Petch", var(--font-system);
+--font-body: var(--font-label);
 
 --font-display: "Victor's Pixel Font", var(--font-body);
 

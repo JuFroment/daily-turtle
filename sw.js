@@ -1,4 +1,4 @@
-const CACHE = "Daily_Turtle-v4";
+const CACHE = "Daily_Turtle-v5";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,9 +9,7 @@ const ASSETS = [
   "./assets/icon-192.png",
   "./assets/icon-512.png",
   "./assets/fonts/victor-pixel.ttf",
-  "./assets/fonts/Kalam-Regular.ttf",
-  "./assets/fonts/ChakraPetch-Regular.ttf",
-  "./assets/fonts/ChakraPetch-SemiBold.ttf"
+  "./assets/fonts/Kalam-Regular.ttf"
 ];
 
 self.addEventListener("install", event => {
