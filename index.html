@@ -1,192 +1,257 @@
 <!doctype html>
 <html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#C7AC80" />
+    <meta
+      name="description"
+      content="Suivi quotidien RPG pour prendre soin de soi, du couple et de la maison."
+    />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Daily Turtle</title>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#C7AC80" />
-  <meta name="description" content="Suivi quotidien RPG pour prendre soin de soi, du couple et de la maison." />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/styles.css" />
-  <title>Daily Turtle</title>
-</head>
-
-<body>
-  <header class="hero">
-    <div>
-      <p class="eyebrow">Journal de progression</p>
-      <h1>Daily Turtle</h1>
-      <p id="todayLabel" class="muted"></p>
-    </div>
-    <div class="hero-actions">
-      <button id="installBtn" class="secondary hidden" type="button">
-        Installer
-      </button>
-    </div>
-  </header>
-
-  <main>
-    <section class="card player-card" aria-labelledby="playerTitle">
-      <div class="row between">
-        <div>
-          <p class="eyebrow">Profil</p>
-          <div class="profile-heading">
-            <h2 id="playerTitle">Julien</h2>
-            <button id="editProfileBtn" class="text-btn" type="button" aria-label="Modifier le nom du profil"
-              title="Modifier le nom du profil">
-              <span aria-hidden="true">✎</span>
-            </button>
-          </div>
-          <p id="rankLabel" class="rank">Apprenti du quotidien</p>
+  <body>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Journal de progression</p>
+        <div class="title-row">
+          <img src="assets/mascot.png" alt="" class="mascot-icon" />
+          <h1>Daily Turtle</h1>
         </div>
-        <div class="level-badge" aria-label="Niveau">
-          <span>Niv.</span>
-          <strong id="levelValue">1</strong>
-        </div>
+        <p id="todayLabel" class="muted"></p>
       </div>
-
-      <div class="progress-wrap">
-        <div class="row between small">
-          <span id="xpLabel">0 XP</span>
-          <span id="nextLevelLabel">100 XP pour le niveau suivant</span>
-        </div>
-        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-          <div id="xpBar" class="progress-bar"></div>
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <div><strong id="totalXp">0</strong><span>XP total</span></div>
-        <div><strong id="todayScore">0/0</strong><span>Quêtes du jour</span></div>
-        <div><strong id="activeDays">0</strong><span>Jours actifs</span></div>
-      </div>
-    </section>
-
-    <section class="card" aria-labelledby="questsTitle">
-      <div class="row between">
-        <div>
-          <p class="eyebrow">Aujourd'hui</p>
-          <h2 id="questsTitle">Quêtes quotidiennes</h2>
-        </div>
-        <button id="editQuestsBtn" class="text-btn" type="button">Modifier</button>
-      </div>
-      <p class="muted encouragement">Une journée imparfaite compte quand même. Le but est de revenir, pas d'être parfait.</p>
-      <div id="categoryList" class="category-list"></div>
-    </section>
-
-    <section class="card" aria-labelledby="backlogTitle">
-      <p class="eyebrow">Sans pression</p>
-      <h2 id="backlogTitle">La carapace à idées</h2>
-      <p class="muted encouragement">Note ce qui te passe par la tête, sans obligation de le faire aujourd'hui.</p>
-      <form id="backlogForm" class="backlog-form">
-        <input type="text" id="backlogInput"
-          placeholder="Ex. Trier les vieux vêtements, essayer une nouvelle recette…" />
-        <button type="submit">Ajouter</button>
-      </form>
-      <div id="backlogActive" class="backlog-list"></div>
-      <div id="backlogDoneSection" class="backlog-done-section hidden">
-        <p class="backlog-done-label">Archivé dans la carapace !</p>
-        <div id="backlogDone" class="backlog-list"></div>
-      </div>
-    </section>
-
-    <section class="card" aria-labelledby="weekTitle">
-      <div class="row between">
-        <div>
-          <p class="eyebrow">Vue d'ensemble</p>
-          <h2 id="weekTitle">Les 7 derniers jours</h2>
-        </div>
-        <span id="weekPercent" class="pill">0 %</span>
-      </div>
-      <div id="weekGrid" class="week-grid"></div>
-    </section>
-
-    <section class="card" aria-labelledby="journalTitle">
-      <p class="eyebrow">Journal de bord</p>
-      <h2 id="journalTitle">Écrire sa chronique</h2>
-
-      <label>
-        Qu'ai-je accompli aujourd'hui ?
-        <textarea id="initiativeNote" rows="3"
-          placeholder="Ex. J'ai proposé une balade, lancé une lessive, cherché une idée pour le salon…"></textarea>
-      </label>
-      <button id="saveNoteBtn" type="button">Enregistrer</button>
-      <p id="noteSaved" class="success hidden">Enregistré.</p>
-
-      <hr class="journal-divider" />
-
-      <label>
-        Cette semaine, je suis fier de…
-        <textarea id="proudInput" rows="3"></textarea>
-      </label>
-      <label>
-        Ce qui m'a fait dévier…
-        <textarea id="obstacleInput" rows="3"></textarea>
-      </label>
-      <label>
-        Ma seule priorité pour la semaine prochaine…
-        <textarea id="priorityInput" rows="3"></textarea>
-      </label>
-      <button id="saveReviewBtn" type="button">Enregistrer le bilan</button>
-      <p id="reviewSaved" class="success hidden">Bilan enregistré.</p>
-      <hr class="journal-divider" />
-
-      <div class="journal-filters" role="group" aria-label="Filtrer l'historique">
-        <button type="button" class="journal-filter-btn active" data-period="today">Aujourd'hui</button>
-        <button type="button" class="journal-filter-btn" data-period="week">1 semaine</button>
-        <button type="button" class="journal-filter-btn" data-period="month">1 mois</button>
-        <button type="button" class="journal-filter-btn" data-period="year">1 an</button>
-      </div>
-      <div id="journalList" class="journal-list"></div>
-    </section>
-
-    <section class="card danger-zone">
-      <details>
-        <summary>Données et réinitialisation</summary>
-        <div class="details-body">
-          <button id="exportBtn" class="secondary" type="button">Exporter mes données</button>
-          <button id="resetBtn" class="danger" type="button">Tout réinitialiser</button>
-          <p class="muted small">Les données restent uniquement dans le navigateur de cet appareil.</p>
-        </div>
-      </details>
-    </section>
-  </main>
-
-  <dialog id="profileDialog">
-    <form method="dialog" id="profileForm">
-      <div class="row between">
-        <h2>Modifier le profil</h2>
-        <button value="cancel" class="text-btn" aria-label="Fermer">
-          Fermer
+      <div class="hero-actions">
+        <button id="installBtn" class="secondary hidden" type="button">
+          Installer
         </button>
       </div>
+    </header>
 
-      <label for="profileNameInput">Nom du profil</label>
-      <input id="profileNameInput" type="text" maxlength="50" autocomplete="name" required />
+    <main>
+      <section class="card player-card" aria-labelledby="playerTitle">
+        <div class="row between">
+          <div>
+            <p class="eyebrow">Profil</p>
+            <div class="profile-heading">
+              <h2 id="playerTitle">Julien</h2>
+              <button
+                id="editProfileBtn"
+                class="text-btn"
+                type="button"
+                aria-label="Modifier le nom du profil"
+                title="Modifier le nom du profil"
+              >
+                <span aria-hidden="true">✎</span>
+              </button>
+            </div>
+            <p id="rankLabel" class="rank">Apprenti du quotidien</p>
+          </div>
+          <div class="level-badge" aria-label="Niveau">
+            <span>Niv.</span>
+            <strong id="levelValue">1</strong>
+          </div>
+        </div>
 
-      <menu>
-        <button value="cancel" class="secondary">Annuler</button>
-        <button value="default">Enregistrer</button>
-      </menu>
-    </form>
-  </dialog>
+        <div class="progress-wrap">
+          <div class="row between small">
+            <span id="xpLabel">0 XP</span>
+            <span id="nextLevelLabel">100 XP pour le niveau suivant</span>
+          </div>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div id="xpBar" class="progress-bar"></div>
+          </div>
+        </div>
 
-  <dialog id="questDialog">
-    <form method="dialog" id="questForm">
-      <div class="row between">
-        <h2>Modifier les catégories et quêtes</h2>
-        <button value="cancel" class="text-btn" aria-label="Fermer">Fermer</button>
-      </div>
-      <div id="categoryEditor"></div>
-      <button id="addCategoryBtn" class="secondary" type="button">Ajouter une catégorie</button>
-      <menu>
-        <button value="cancel" class="secondary">Annuler</button>
-        <button id="saveQuestsBtn" value="default">Enregistrer</button>
-      </menu>
-    </form>
-  </dialog>
+        <div class="stats-grid">
+          <div><strong id="totalXp">0</strong><span>XP total</span></div>
+          <div>
+            <strong id="todayScore">0/0</strong><span>Quêtes du jour</span>
+          </div>
+          <div><strong id="activeDays">0</strong><span>Jours actifs</span></div>
+        </div>
+      </section>
 
-  <script type="module" src="js/app.js"></script>
-</body>
+      <section class="card" aria-labelledby="questsTitle">
+        <div class="row between">
+          <div>
+            <p class="eyebrow">Aujourd'hui</p>
+            <h2 id="questsTitle">Quêtes quotidiennes</h2>
+          </div>
+          <button id="editQuestsBtn" class="text-btn" type="button">
+            Modifier
+          </button>
+        </div>
+        <p class="muted encouragement">
+          Une journée imparfaite compte quand même. Le but est de revenir, pas
+          d'être parfait.
+        </p>
+        <div id="categoryList" class="category-list"></div>
+      </section>
 
+      <section class="card" aria-labelledby="backlogTitle">
+        <p class="eyebrow">Sans pression</p>
+        <h2 id="backlogTitle">La carapace à idées</h2>
+        <p class="muted encouragement">
+          Note ce qui te passe par la tête, sans obligation de le faire
+          aujourd'hui.
+        </p>
+        <form id="backlogForm" class="backlog-form">
+          <input
+            type="text"
+            id="backlogInput"
+            placeholder="Ex. Trier les vieux vêtements, essayer une nouvelle recette…"
+          />
+          <button type="submit">Ajouter</button>
+        </form>
+        <div id="backlogActive" class="backlog-list"></div>
+        <div id="backlogDoneSection" class="backlog-done-section hidden">
+          <p class="backlog-done-label">Archivé dans la carapace !</p>
+          <div id="backlogDone" class="backlog-list"></div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="weekTitle">
+        <div class="row between">
+          <div>
+            <p class="eyebrow">Vue d'ensemble</p>
+            <h2 id="weekTitle">Les 7 derniers jours</h2>
+          </div>
+          <span id="weekPercent" class="pill">0 %</span>
+        </div>
+        <div id="weekGrid" class="week-grid"></div>
+      </section>
+
+      <section class="card" aria-labelledby="journalTitle">
+        <p class="eyebrow">Journal de bord</p>
+        <h2 id="journalTitle">Écrire sa chronique</h2>
+
+        <label>
+          Qu'ai-je accompli aujourd'hui ?
+          <textarea
+            id="initiativeNote"
+            rows="3"
+            placeholder="Ex. J'ai proposé une balade, lancé une lessive, cherché une idée pour le salon…"
+          ></textarea>
+        </label>
+        <button id="saveNoteBtn" type="button">Enregistrer</button>
+        <p id="noteSaved" class="success hidden">Enregistré.</p>
+
+        <hr class="journal-divider" />
+
+        <label>
+          Cette semaine, je suis fier de…
+          <textarea id="proudInput" rows="3"></textarea>
+        </label>
+        <label>
+          Ce qui m'a fait dévier…
+          <textarea id="obstacleInput" rows="3"></textarea>
+        </label>
+        <label>
+          Ma seule priorité pour la semaine prochaine…
+          <textarea id="priorityInput" rows="3"></textarea>
+        </label>
+        <button id="saveReviewBtn" type="button">Enregistrer le bilan</button>
+        <p id="reviewSaved" class="success hidden">Bilan enregistré.</p>
+        <hr class="journal-divider" />
+
+        <div
+          class="journal-filters"
+          role="group"
+          aria-label="Filtrer l'historique"
+        >
+          <button
+            type="button"
+            class="journal-filter-btn active"
+            data-period="today"
+          >
+            Aujourd'hui
+          </button>
+          <button type="button" class="journal-filter-btn" data-period="week">
+            1 semaine
+          </button>
+          <button type="button" class="journal-filter-btn" data-period="month">
+            1 mois
+          </button>
+          <button type="button" class="journal-filter-btn" data-period="year">
+            1 an
+          </button>
+        </div>
+        <div id="journalList" class="journal-list"></div>
+      </section>
+
+      <section class="card danger-zone">
+        <details>
+          <summary>Données et réinitialisation</summary>
+          <div class="details-body">
+            <button id="exportBtn" class="secondary" type="button">
+              Exporter mes données
+            </button>
+            <button id="resetBtn" class="danger" type="button">
+              Tout réinitialiser
+            </button>
+            <p class="muted small">
+              Les données restent uniquement dans le navigateur de cet appareil.
+            </p>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <dialog id="profileDialog">
+      <form method="dialog" id="profileForm">
+        <div class="row between">
+          <h2>Modifier le profil</h2>
+          <button value="cancel" class="text-btn" aria-label="Fermer">
+            Fermer
+          </button>
+        </div>
+
+        <label for="profileNameInput">Nom du profil</label>
+        <input
+          id="profileNameInput"
+          type="text"
+          maxlength="50"
+          autocomplete="name"
+          required
+        />
+
+        <menu>
+          <button value="cancel" class="secondary">Annuler</button>
+          <button value="default">Enregistrer</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="questDialog">
+      <form method="dialog" id="questForm">
+        <div class="row between">
+          <h2>Modifier les catégories et quêtes</h2>
+          <button value="cancel" class="text-btn" aria-label="Fermer">
+            Fermer
+          </button>
+        </div>
+        <div id="categoryEditor"></div>
+        <button id="addCategoryBtn" class="secondary" type="button">
+          Ajouter une catégorie
+        </button>
+        <menu>
+          <button value="cancel" class="secondary">Annuler</button>
+          <button id="saveQuestsBtn" value="default">Enregistrer</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
 </html>
