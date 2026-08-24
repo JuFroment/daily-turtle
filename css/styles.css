@@ -139,6 +139,19 @@ button.text-btn { background: transparent; color: var(--text-secondary); padding
   align-items: start;
 }
 
+.title-row {
+  display: flex;
+  align-items: flex-end;
+  gap: .5rem;
+}
+
+.mascot-icon {
+  width: 2.8rem;
+  height: 2.8rem;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
 .hero .eyebrow {
   color: var(--text-secondary);
 }
