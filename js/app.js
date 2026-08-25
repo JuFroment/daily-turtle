@@ -728,3 +728,15 @@ if ("serviceWorker" in navigator) {
 }
 
 render();
+
+function numberButtons() {
+  document.querySelectorAll("button").forEach((btn, index) => {
+    btn.dataset.btnVariant = index % 10;
+  });
+}
+
+numberButtons();
+new MutationObserver(numberButtons).observe(document.body, {
+  childList: true,
+  subtree: true
+});
