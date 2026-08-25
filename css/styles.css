@@ -156,7 +156,7 @@ button.text-btn { background: transparent; color: var(--text-secondary); padding
   color: var(--text-secondary);
 }
 
-.hero h1 { margin: .1rem 0; font-size: clamp(2.7rem, 7vw, 2.7rem); line-height: 1.15;}
+.hero h1 { margin: .1rem 0; font-size: clamp(2rem, 9vw, 2.7rem); line-height: 1.15; }
 
 main {
   width: min(100% - 1.5rem, 760px);
