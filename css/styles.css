@@ -145,11 +145,26 @@ button.text-btn { background: transparent; color: var(--text-secondary); padding
   gap: .5rem;
 }
 
+.title-row--center {
+  align-items: center;
+}
+
 .mascot-icon {
   width: 2.8rem;
   height: 2.8rem;
   image-rendering: pixelated;
   flex-shrink: 0;
+}
+
+.turtle-icon {
+  width: 3.4rem;
+  height: 3.4rem;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+  transform: rotate(-20deg);
+  position: relative;
+  top: 0.7rem;
+  margin-right: 1rem;
 }
 
 .hero .eyebrow {
@@ -272,6 +287,21 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   font-size: 0.8rem;
 }
 
+.feather-icon {
+  width: 1rem;
+  height: 1rem;
+  image-rendering: pixelated;
+  vertical-align: middle;
+  transform: rotate(5deg);
+  position: relative;
+  top: -0.15rem;
+}
+
+.level-badge-wrap {
+  position: relative;
+  z-index: 0;
+}
+
 .level-badge {
   width: 76px;
   height: 76px;
@@ -283,6 +313,18 @@ h2 { margin: .15rem 0 .5rem; font-size: 1.25rem; }
   text-align: center;
   font-family: var(--font-label);
 }
+
+.frog-icon {
+  position: absolute;
+  top: -1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.2rem;
+  height: 2.2rem;
+  image-rendering: pixelated;
+  z-index: -1;
+}
+
 .level-badge span { font-size: 1rem; opacity: .8; font-weight: 400; line-height: 1.2; }
 .level-badge strong { font-size: 2rem; font-weight: 400; line-height: 1.1; }
 
