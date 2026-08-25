@@ -904,15 +904,15 @@ label {
   transform: rotate(-1.2deg) translate(1px, -1px);
   pointer-events: none;
 }
-.day-cell:nth-child(1),
-.day-cell:nth-child(4) {
+.day-cell:nth-child(1):not(.today),
+.day-cell:nth-child(4):not(.today) {
   clip-path: polygon(
     0% 0%, 100% 0%, 100% 100%, 22% 100%, 0% 78%
   );
 }
 
-.day-cell:nth-child(2),
-.day-cell:nth-child(7) {
+.day-cell:nth-child(2):not(.today),
+.day-cell:nth-child(7):not(.today) {
   clip-path: polygon(
     0% 0%, 78% 0%, 100% 22%, 100% 100%, 0% 100%
   );
