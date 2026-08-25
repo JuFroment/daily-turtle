@@ -5,32 +5,78 @@ import {
   levelInfo,
   rankForLevel,
   totalSkillPoints,
-  globalLevelInfo
+  globalLevelInfo,
 } from "./logic.js";
 
 const STORAGE_KEY = "julien-rpg-tracker-v1";
 
 const defaultCategories = [
-  { id: crypto.randomUUID(), name: "Le Foyer", description: "Prendre soin de l'endroit où tu vis." },
-  { id: crypto.randomUUID(), name: "Corps", description: "Prendre soin de toi, physiquement." },
-  { id: crypto.randomUUID(), name: "Esprit", description: "Prendre soin de ta tête, de ton calme." },
-  { id: crypto.randomUUID(), name: "Cercle proche", description: "Prendre soin de tes proches — humains et animaux." }
+  {
+    id: crypto.randomUUID(),
+    name: "Le Foyer",
+    description: "Prendre soin de l'endroit où tu vis.",
+  },
+  {
+    id: crypto.randomUUID(),
+    name: "Corps",
+    description: "Prendre soin de toi, physiquement.",
+  },
+  {
+    id: crypto.randomUUID(),
+    name: "Esprit",
+    description: "Prendre soin de ta tête, de ton calme.",
+  },
+  {
+    id: crypto.randomUUID(),
+    name: "Cercle proche",
+    description: "Prendre soin de tes proches — humains et animaux.",
+  },
 ];
 
 const defaultState = {
   profileName: "Julien",
   categories: defaultCategories,
   quests: [
-    { id: crypto.randomUUID(), title: "Prendre une douche", xp: 15, categoryId: defaultCategories[1].id },
-    { id: crypto.randomUUID(), title: "Porter des vêtements propres et en bon état", xp: 10, categoryId: defaultCategories[1].id },
-    { id: crypto.randomUUID(), title: "Faire une action pour la maison", xp: 15, categoryId: defaultCategories[0].id },
-    { id: crypto.randomUUID(), title: "Créer un moment complice avec son·sa chéri·e", xp: 20, categoryId: defaultCategories[3].id },
-    { id: crypto.randomUUID(), title: "Manger au moins un repas équilibré", xp: 15, categoryId: defaultCategories[1].id },
-    { id: crypto.randomUUID(), title: "Faire une pause avant de lancer le PC", xp: 10, categoryId: defaultCategories[2].id }
+    {
+      id: crypto.randomUUID(),
+      title: "Prendre une douche",
+      xp: 15,
+      categoryId: defaultCategories[1].id,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Porter des vêtements propres et en bon état",
+      xp: 10,
+      categoryId: defaultCategories[1].id,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Faire une action pour la maison",
+      xp: 15,
+      categoryId: defaultCategories[0].id,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Créer un moment complice avec son·sa chéri·e",
+      xp: 20,
+      categoryId: defaultCategories[3].id,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Manger au moins un repas équilibré",
+      xp: 15,
+      categoryId: defaultCategories[1].id,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Faire une pause avant de lancer le PC",
+      xp: 10,
+      categoryId: defaultCategories[2].id,
+    },
   ],
   days: {},
   reviews: {},
-  backlog: []
+  backlog: [],
 };
 
 const TITLE_TO_CATEGORY = {
@@ -39,16 +85,19 @@ const TITLE_TO_CATEGORY = {
   "Faire une action pour la maison": "Le Foyer",
   "Créer un moment complice avec son·sa chéri·e": "Cercle proche",
   "Manger au moins un repas équilibré": "Corps",
-  "Faire une pause avant de lancer le PC": "Esprit"
+  "Faire une pause avant de lancer le PC": "Esprit",
 };
 
 function migrateQuestCategories(quests, categories) {
-  const idByName = name => categories.find(c => c.name === name)?.id;
+  const idByName = (name) => categories.find((c) => c.name === name)?.id;
   const fallbackId = idByName("Corps");
-  return quests.map(quest => {
+  return quests.map((quest) => {
     if (quest.categoryId) return quest;
     const categoryName = TITLE_TO_CATEGORY[quest.title];
-    return { ...quest, categoryId: (categoryName && idByName(categoryName)) || fallbackId };
+    return {
+      ...quest,
+      categoryId: (categoryName && idByName(categoryName)) || fallbackId,
+    };
   });
 }
 
@@ -62,8 +111,12 @@ function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!saved) return structuredClone(defaultState);
-    const categories = saved.categories?.length ? saved.categories : structuredClone(defaultState.categories);
-    const quests = saved.quests?.length ? saved.quests : structuredClone(defaultState.quests);
+    const categories = saved.categories?.length
+      ? saved.categories
+      : structuredClone(defaultState.categories);
+    const quests = saved.quests?.length
+      ? saved.quests
+      : structuredClone(defaultState.quests);
     return {
       ...structuredClone(defaultState),
       ...saved,
@@ -71,7 +124,7 @@ function loadState() {
       quests: migrateQuestCategories(quests, categories),
       days: saved.days || {},
       reviews: saved.reviews || {},
-      backlog: saved.backlog || []
+      backlog: saved.backlog || [],
     };
   } catch {
     return structuredClone(defaultState);
@@ -95,30 +148,35 @@ function renderCategories() {
   container.innerHTML = "";
   const day = currentDay();
 
-  state.categories.forEach(category => {
-    const categoryQuests = state.quests.filter(q => q.categoryId === category.id);
+  state.categories.forEach((category) => {
+    const categoryQuests = state.quests.filter(
+      (q) => q.categoryId === category.id,
+    );
     const info = levelInfo(categoryXp(state.days, state.quests, category.id));
     const isExpanded = expandedCategoryId === category.id;
 
     const card = document.createElement("div");
     card.className = `category-card ${isExpanded ? "expanded" : ""}`;
 
+    const inner = document.createElement("div");
+    inner.className = "category-card-inner";
+
     const header = document.createElement("button");
     header.type = "button";
     header.className = "category-header";
     header.innerHTML = `
-      <div class="category-header-main">
-        <span class="category-name">${escapeHtml(category.name)}</span>
-        <div class="category-mini-progress">
-          <div class="category-mini-progress-bar" style="width: ${info.percent}%"></div>
-        </div>
-      </div>
-      <span class="category-level">Niv. ${info.level}</span>`;
+  <div class="category-header-main">
+    <span class="category-name">${escapeHtml(category.name)}</span>
+    <div class="category-mini-progress">
+      <div class="category-mini-progress-bar" style="width: ${info.percent}%"></div>
+    </div>
+  </div>
+  <span class="category-level">Niv. ${info.level}</span>`;
     header.addEventListener("click", () => {
       expandedCategoryId = isExpanded ? null : category.id;
       renderCategories();
     });
-    card.appendChild(header);
+    inner.appendChild(header);
 
     if (isExpanded) {
       const body = document.createElement("div");
@@ -127,20 +185,23 @@ function renderCategories() {
 
       const list = document.createElement("div");
       list.className = "quest-list";
-      categoryQuests.forEach(quest => {
+      categoryQuests.forEach((quest) => {
         const isDone = day.completed.includes(quest.id);
         const label = document.createElement("label");
         label.className = `quest ${isDone ? "done" : ""}`;
         label.innerHTML = `
-          <input type="checkbox" ${isDone ? "checked" : ""} aria-label="${escapeHtml(quest.title)}" />
-          <span class="quest-title">${escapeHtml(quest.title)}</span>
-          <span class="quest-xp">+${quest.xp} XP</span>`;
-        label.querySelector("input").addEventListener("change", event => {
+      <input type="checkbox" ${isDone ? "checked" : ""} aria-label="${escapeHtml(quest.title)}" />
+      <span class="quest-title">${escapeHtml(quest.title)}</span>
+      <span class="quest-xp">+${quest.xp} XP</span>`;
+        label.querySelector("input").addEventListener("change", (event) => {
           const todayData = currentDay();
           if (event.target.checked) {
-            if (!todayData.completed.includes(quest.id)) todayData.completed.push(quest.id);
+            if (!todayData.completed.includes(quest.id))
+              todayData.completed.push(quest.id);
           } else {
-            todayData.completed = todayData.completed.filter(id => id !== quest.id);
+            todayData.completed = todayData.completed.filter(
+              (id) => id !== quest.id,
+            );
           }
           saveState();
           render();
@@ -148,31 +209,40 @@ function renderCategories() {
         list.appendChild(label);
       });
       body.appendChild(list);
-      card.appendChild(body);
+      inner.appendChild(body);
     }
 
+    card.appendChild(inner);
     container.appendChild(card);
   });
 }
 
 function render() {
   const today = new Date();
-  document.querySelector("#todayLabel").textContent =
-    today.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  document.querySelector("#todayLabel").textContent = today.toLocaleDateString(
+    "fr-FR",
+    { weekday: "long", day: "numeric", month: "long" },
+  );
   document.querySelector("#playerTitle").textContent = state.profileName;
   const totalXp = getTotalXp(state.days, state.quests);
   document.querySelector("#totalXp").textContent = totalXp;
-  const info = globalLevelInfo(totalSkillPoints(state.days, state.quests, state.categories));
+  const info = globalLevelInfo(
+    totalSkillPoints(state.days, state.quests, state.categories),
+  );
   document.querySelector("#levelValue").textContent = info.level;
   document.querySelector("#rankLabel").textContent = rankForLevel(info.level);
-  document.querySelector("#xpLabel").textContent = `${info.current} / ${info.needed} montées de compétence`;
-  document.querySelector("#nextLevelLabel").textContent = `${info.needed - info.current} montée(s) de compétence pour le niveau suivant`;
+  document.querySelector("#xpLabel").textContent =
+    `${info.current} / ${info.needed} montées de compétence`;
+  document.querySelector("#nextLevelLabel").textContent =
+    `${info.needed - info.current} montée(s) de compétence pour le niveau suivant`;
   document.querySelector("#xpBar").style.width = `${info.percent}%`;
 
   const day = currentDay();
-  document.querySelector("#todayScore").textContent = `${day.completed.length}/${state.quests.length}`;
-  document.querySelector("#activeDays").textContent =
-    Object.values(state.days).filter(d => (d.completed?.length || 0) > 0).length;
+  document.querySelector("#todayScore").textContent =
+    `${day.completed.length}/${state.quests.length}`;
+  document.querySelector("#activeDays").textContent = Object.values(
+    state.days,
+  ).filter((d) => (d.completed?.length || 0) > 0).length;
 
   renderCategories();
 
@@ -209,7 +279,9 @@ function renderWeek() {
     completed += count;
     possible += state.quests.length;
 
-    const percent = state.quests.length ? Math.round((count / state.quests.length) * 100) : 0;
+    const percent = state.quests.length
+      ? Math.round((count / state.quests.length) * 100)
+      : 0;
     const cell = document.createElement("div");
     cell.className = "day-cell";
     if (offset === 0) cell.classList.add("today");
@@ -225,8 +297,9 @@ function renderWeek() {
     grid.appendChild(cell);
   }
 
-  document.querySelector("#weekPercent").textContent =
-    possible ? `${Math.round((completed / possible) * 100)} %` : "0 %";
+  document.querySelector("#weekPercent").textContent = possible
+    ? `${Math.round((completed / possible) * 100)} %`
+    : "0 %";
 }
 
 function renderBacklog() {
@@ -245,31 +318,37 @@ function renderBacklog() {
         <span>${escapeHtml(item.title)}</span>
       </label>
       <button type="button" class="text-btn" aria-label="Supprimer">✕</button>`;
-    row.querySelector("input").addEventListener("change", event => {
+    row.querySelector("input").addEventListener("change", (event) => {
       item.done = event.target.checked;
       saveState();
       renderBacklog();
     });
     row.querySelector("button").addEventListener("click", () => {
-      state.backlog = state.backlog.filter(entry => entry.id !== item.id);
+      state.backlog = state.backlog.filter((entry) => entry.id !== item.id);
       saveState();
       renderBacklog();
     });
     container.appendChild(row);
   };
 
-  state.backlog.forEach(item => renderItem(item, item.done ? doneList : activeList));
+  state.backlog.forEach((item) =>
+    renderItem(item, item.done ? doneList : activeList),
+  );
 
   doneSection.classList.toggle("hidden", doneList.children.length === 0);
 }
 
 function reviewKey(date = new Date()) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
   const dayNum = (d.getUTCDay() + 6) % 7; // lundi = 0
   d.setUTCDate(d.getUTCDate() - dayNum + 3); // jeudi de cette semaine
   const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
   const firstThursdayDayNum = (firstThursday.getUTCDay() + 6) % 7;
-  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstThursdayDayNum + 3);
+  firstThursday.setUTCDate(
+    firstThursday.getUTCDate() - firstThursdayDayNum + 3,
+  );
   const week = 1 + Math.round((d - firstThursday) / (7 * 86400000));
   return `${d.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }
@@ -292,7 +371,8 @@ function loadReview() {
 
 function getPeriodStart(period) {
   const now = new Date();
-  if (period === "month") return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  if (period === "month")
+    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
   if (period === "year") return new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
 
   const cutoff = new Date();
@@ -314,9 +394,12 @@ function weeklyChronicleTitle(mondayDateStr) {
   const sameMonth = monday.getMonth() === sunday.getMonth();
   const mondayLabel = monday.toLocaleDateString(
     "fr-FR",
-    sameMonth ? { day: "numeric" } : { day: "numeric", month: "long" }
+    sameMonth ? { day: "numeric" } : { day: "numeric", month: "long" },
   );
-  const sundayLabel = sunday.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  const sundayLabel = sunday.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+  });
 
   return `Chronique du ${mondayLabel} au ${sundayLabel}`;
 }
@@ -341,13 +424,14 @@ function getPeriodSummary(period) {
     const completed = day.completed || [];
     if (completed.length) activeDays++;
     xp += completed.reduce((sum, id) => {
-      const quest = state.quests.find(q => q.id === id);
+      const quest = state.quests.find((q) => q.id === id);
       return sum + (quest?.xp || 0);
     }, 0);
   });
 
-  const reviewsCount = Object.keys(state.reviews)
-    .filter(key => startOfIsoWeek(key) >= cutoff).length;
+  const reviewsCount = Object.keys(state.reviews).filter(
+    (key) => startOfIsoWeek(key) >= cutoff,
+  ).length;
 
   return { activeDays, xp, reviewsCount };
 }
@@ -395,17 +479,19 @@ function renderJournal() {
 function openQuestEditor() {
   const editor = document.querySelector("#categoryEditor");
   editor.innerHTML = "";
-  state.categories.forEach(category => {
+  state.categories.forEach((category) => {
     const group = addCategoryEditorGroup(category);
     const questContainer = group.querySelector(".category-quest-editor");
     state.quests
-      .filter(q => q.categoryId === category.id)
-      .forEach(quest => addEditorRow(quest, questContainer));
+      .filter((q) => q.categoryId === category.id)
+      .forEach((quest) => addEditorRow(quest, questContainer));
   });
   document.querySelector("#questDialog").showModal();
 }
 
-function addCategoryEditorGroup(category = { id: crypto.randomUUID(), name: "", description: "" }) {
+function addCategoryEditorGroup(
+  category = { id: crypto.randomUUID(), name: "", description: "" },
+) {
   const group = document.createElement("div");
   group.className = "category-editor-group";
   group.dataset.id = category.id;
@@ -418,16 +504,23 @@ function addCategoryEditorGroup(category = { id: crypto.randomUUID(), name: "", 
     <div class="category-quest-editor"></div>
     <button type="button" class="secondary add-quest-to-category-btn">Ajouter une quête</button>`;
 
-  group.querySelector(".delete-category-btn").addEventListener("click", () => group.remove());
-  group.querySelector(".add-quest-to-category-btn").addEventListener("click", () => {
-    addEditorRow(undefined, group.querySelector(".category-quest-editor"));
-  });
+  group
+    .querySelector(".delete-category-btn")
+    .addEventListener("click", () => group.remove());
+  group
+    .querySelector(".add-quest-to-category-btn")
+    .addEventListener("click", () => {
+      addEditorRow(undefined, group.querySelector(".category-quest-editor"));
+    });
 
   document.querySelector("#categoryEditor").appendChild(group);
   return group;
 }
 
-function addEditorRow(quest = { id: crypto.randomUUID(), title: "", xp: 10 }, container) {
+function addEditorRow(
+  quest = { id: crypto.randomUUID(), title: "", xp: 10 },
+  container,
+) {
   const row = document.createElement("div");
   row.className = "editor-row";
   row.dataset.id = quest.id;
@@ -456,7 +549,7 @@ document.querySelector("#editProfileBtn").addEventListener("click", () => {
   input.focus();
 });
 
-document.querySelector("#profileForm").addEventListener("submit", event => {
+document.querySelector("#profileForm").addEventListener("submit", (event) => {
   if (event.submitter?.value === "cancel") {
     return;
   }
@@ -480,7 +573,9 @@ document.querySelector("#profileForm").addEventListener("submit", event => {
 });
 
 document.querySelector("#saveNoteBtn").addEventListener("click", () => {
-  currentDay().initiative = document.querySelector("#initiativeNote").value.trim();
+  currentDay().initiative = document
+    .querySelector("#initiativeNote")
+    .value.trim();
   saveState();
   renderJournal();
   const feedback = document.querySelector("#noteSaved");
@@ -488,7 +583,7 @@ document.querySelector("#saveNoteBtn").addEventListener("click", () => {
   setTimeout(() => feedback.classList.add("hidden"), 1600);
 });
 
-document.querySelector("#backlogForm").addEventListener("submit", event => {
+document.querySelector("#backlogForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const input = document.querySelector("#backlogInput");
   const title = input.value.trim();
@@ -503,7 +598,7 @@ document.querySelector("#saveReviewBtn").addEventListener("click", () => {
   state.reviews[reviewKey()] = {
     proud: document.querySelector("#proudInput").value.trim(),
     obstacle: document.querySelector("#obstacleInput").value.trim(),
-    priority: document.querySelector("#priorityInput").value.trim()
+    priority: document.querySelector("#priorityInput").value.trim(),
   };
   saveState();
   renderJournal();
@@ -512,14 +607,16 @@ document.querySelector("#saveReviewBtn").addEventListener("click", () => {
   setTimeout(() => feedback.classList.add("hidden"), 1600);
 });
 
-document.querySelectorAll(".journal-filter-btn").forEach(btn => {
+document.querySelectorAll(".journal-filter-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const alreadyActive = btn.classList.contains("active");
 
     if (alreadyActive) {
       journalCollapsed = !journalCollapsed;
     } else {
-      document.querySelectorAll(".journal-filter-btn").forEach(b => b.classList.remove("active"));
+      document
+        .querySelectorAll(".journal-filter-btn")
+        .forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       journalPeriod = btn.dataset.period;
       journalCollapsed = false;
@@ -529,18 +626,26 @@ document.querySelectorAll(".journal-filter-btn").forEach(btn => {
   });
 });
 
-document.querySelector("#editQuestsBtn").addEventListener("click", openQuestEditor);
-document.querySelector("#addCategoryBtn").addEventListener("click", () => addCategoryEditorGroup());
+document
+  .querySelector("#editQuestsBtn")
+  .addEventListener("click", openQuestEditor);
+document
+  .querySelector("#addCategoryBtn")
+  .addEventListener("click", () => addCategoryEditorGroup());
 
-document.querySelector("#saveQuestsBtn").addEventListener("click", event => {
+document.querySelector("#saveQuestsBtn").addEventListener("click", (event) => {
   event.preventDefault();
   const groups = [...document.querySelectorAll(".category-editor-group")];
 
-  const categories = groups.map(group => ({
-    id: group.dataset.id,
-    name: group.querySelector(".category-name-input").value.trim(),
-    description: group.querySelector(".category-description-input").value.trim()
-  })).filter(c => c.name);
+  const categories = groups
+    .map((group) => ({
+      id: group.dataset.id,
+      name: group.querySelector(".category-name-input").value.trim(),
+      description: group
+        .querySelector(".category-description-input")
+        .value.trim(),
+    }))
+    .filter((c) => c.name);
 
   if (!categories.length) {
     alert("Il faut conserver au moins une catégorie.");
@@ -548,17 +653,20 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", event => {
   }
 
   const quests = [];
-  groups.forEach(group => {
+  groups.forEach((group) => {
     const categoryId = group.dataset.id;
-    if (!categories.some(c => c.id === categoryId)) return;
-    group.querySelectorAll(".editor-row").forEach(row => {
+    if (!categories.some((c) => c.id === categoryId)) return;
+    group.querySelectorAll(".editor-row").forEach((row) => {
       const title = row.querySelector('input[type="text"]').value.trim();
       if (!title) return;
       quests.push({
         id: row.dataset.id,
         title,
-        xp: Math.max(1, Number(row.querySelector('input[type="number"]').value) || 10),
-        categoryId
+        xp: Math.max(
+          1,
+          Number(row.querySelector('input[type="number"]').value) || 10,
+        ),
+        categoryId,
       });
     });
   });
@@ -570,8 +678,10 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", event => {
 
   state.categories = categories;
   state.quests = quests;
-  Object.values(state.days).forEach(day => {
-    day.completed = (day.completed || []).filter(id => state.quests.some(q => q.id === id));
+  Object.values(state.days).forEach((day) => {
+    day.completed = (day.completed || []).filter((id) =>
+      state.quests.some((q) => q.id === id),
+    );
   });
   saveState();
   document.querySelector("#questDialog").close();
@@ -579,7 +689,9 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", event => {
 });
 
 document.querySelector("#exportBtn").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(state, null, 2)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -595,7 +707,7 @@ document.querySelector("#resetBtn").addEventListener("click", () => {
   render();
 });
 
-window.addEventListener("beforeinstallprompt", event => {
+window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();
   deferredInstallPrompt = event;
   document.querySelector("#installBtn").classList.remove("hidden");
@@ -616,3 +728,15 @@ if ("serviceWorker" in navigator) {
 }
 
 render();
+
+function numberButtons() {
+  document.querySelectorAll("button").forEach((btn, index) => {
+    btn.dataset.btnVariant = index % 10;
+  });
+}
+
+numberButtons();
+new MutationObserver(numberButtons).observe(document.body, {
+  childList: true,
+  subtree: true
+});
