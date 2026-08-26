@@ -1351,6 +1351,11 @@ menu {
   .journal-filters-row {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .journal-filters {
+    justify-content: center;
   }
   #journalList {
     margin-top: 0.5rem;
