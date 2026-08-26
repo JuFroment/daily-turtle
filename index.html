@@ -171,26 +171,35 @@
         <p id="reviewSaved" class="success hidden">Bilan enregistré.</p>
         <hr class="journal-divider" />
 
-        <div
-          class="journal-filters"
-          role="group"
-          aria-label="Filtrer l'historique"
-        >
-          <button
-            type="button"
-            class="journal-filter-btn active"
-            data-period="today"
+        <div class="journal-filters-row">
+          <div
+            class="journal-filters"
+            role="group"
+            aria-label="Filtrer l'historique"
           >
-            Aujourd'hui
-          </button>
-          <button type="button" class="journal-filter-btn" data-period="week">
-            1 semaine
-          </button>
-          <button type="button" class="journal-filter-btn" data-period="month">
-            1 mois
-          </button>
-          <button type="button" class="journal-filter-btn" data-period="year">
-            1 an
+            <button
+              type="button"
+              class="journal-filter-btn active"
+              data-period="today"
+            >
+              Aujourd'hui
+            </button>
+            <button type="button" class="journal-filter-btn" data-period="week">
+              1 semaine
+            </button>
+            <button
+              type="button"
+              class="journal-filter-btn"
+              data-period="month"
+            >
+              1 mois
+            </button>
+            <button type="button" class="journal-filter-btn" data-period="year">
+              1 an
+            </button>
+          </div>
+          <button type="button" id="pastJournalBtn" class="secondary">
+            Relire une chronique passée ?
           </button>
         </div>
         <div id="journalList" class="journal-list"></div>
@@ -256,6 +265,42 @@
           <button id="saveQuestsBtn" value="default">Enregistrer</button>
         </menu>
       </form>
+    </dialog>
+
+    <dialog id="pastJournalDialog">
+      <div class="row between">
+        <h2>Relire une chronique passée</h2>
+        <button
+          type="button"
+          id="closePastJournalBtn"
+          class="text-btn"
+          aria-label="Fermer"
+        >
+          Fermer
+        </button>
+      </div>
+
+      <div class="calendar-nav row between">
+        <button
+          type="button"
+          id="prevMonthBtn"
+          class="text-btn"
+          aria-label="Mois précédent"
+        >
+          ←
+        </button>
+        <p id="calendarMonthLabel" class="calendar-month-label"></p>
+        <button
+          type="button"
+          id="nextMonthBtn"
+          class="text-btn"
+          aria-label="Mois suivant"
+        >
+          →
+        </button>
+      </div>
+
+      <div id="pastJournalCalendar" class="past-journal-calendar"></div>
     </dialog>
 
     <script type="module" src="js/app.js"></script>
