@@ -106,6 +106,33 @@ let deferredInstallPrompt = null;
 let journalPeriod = "today";
 let journalCollapsed = false;
 let expandedCategoryId = null;
+let calendarMonth = new Date();
+let viewedDayKey = null;
+let viewedWeekKey = null;
+
+function getMonthWeeks(monthDate) {
+  const year = monthDate.getUTCFullYear();
+  const month = monthDate.getUTCMonth();
+  const firstOfMonth = new Date(Date.UTC(year, month, 1));
+  const firstDayNum = (firstOfMonth.getUTCDay() + 6) % 7; // lundi = 0
+  const gridStart = new Date(firstOfMonth);
+  gridStart.setUTCDate(gridStart.getUTCDate() - firstDayNum);
+  const lastOfMonth = new Date(Date.UTC(year, month + 1, 0));
+
+  const weeks = [];
+  let cursor = new Date(gridStart);
+  let reachedEnd = false;
+  while (!reachedEnd) {
+    const week = [];
+    for (let i = 0; i < 7; i++) {
+      week.push(new Date(cursor));
+      if (cursor.getTime() === lastOfMonth.getTime()) reachedEnd = true;
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+    weeks.push(week);
+  }
+  return weeks;
+}
 
 function loadState() {
   try {
@@ -446,25 +473,34 @@ function renderJournal() {
   item.className = "journal-entry";
 
   if (journalPeriod === "today") {
-    const today = currentDay();
+    const key = viewedDayKey || dateKey();
+    const today = state.days[key] || { completed: [], initiative: "" };
+    const backLink = viewedDayKey
+      ? `<button type="button" class="text-btn journal-back-btn" data-back="today">← Revenir à aujourd'hui</button>`
+      : "";
     if (today.initiative) {
       item.innerHTML = `
-        <p class="journal-entry-title">${dailyChronicleTitle(dateKey())}</p>
-        <p>${escapeHtml(today.initiative)}</p>`;
+      ${backLink}
+      <p class="journal-entry-title">${dailyChronicleTitle(key)}</p>
+      <p>${escapeHtml(today.initiative)}</p>`;
     } else {
-      item.innerHTML = `<p class="muted">Rien à afficher pour aujourd'hui.</p>`;
+      item.innerHTML = `${backLink}<p class="muted">Rien à afficher pour ${viewedDayKey ? "ce jour" : "aujourd'hui"}.</p>`;
     }
   } else if (journalPeriod === "week") {
-    const key = reviewKey();
+    const key = viewedWeekKey || reviewKey();
     const review = state.reviews[key];
+    const backLink = viewedWeekKey
+      ? `<button type="button" class="text-btn journal-back-btn" data-back="week">← Revenir à cette semaine</button>`
+      : "";
     if (review) {
       item.innerHTML = `
-        <p class="journal-entry-title">${weeklyChronicleTitle(startOfIsoWeek(key).toISOString().slice(0, 10))}</p>
-        <p><strong>Fierté :</strong> ${escapeHtml(review.proud || "—")}</p>
-        <p><strong>Obstacle :</strong> ${escapeHtml(review.obstacle || "—")}</p>
-        <p><strong>Priorité :</strong> ${escapeHtml(review.priority || "—")}</p>`;
+      ${backLink}
+      <p class="journal-entry-title">${weeklyChronicleTitle(startOfIsoWeek(key).toISOString().slice(0, 10))}</p>
+      <p><strong>Fierté :</strong> ${escapeHtml(review.proud || "—")}</p>
+      <p><strong>Obstacle :</strong> ${escapeHtml(review.obstacle || "—")}</p>
+      <p><strong>Priorité :</strong> ${escapeHtml(review.priority || "—")}</p>`;
     } else {
-      item.innerHTML = `<p class="muted">Rien à afficher pour cette semaine.</p>`;
+      item.innerHTML = `${backLink}<p class="muted">Rien à afficher pour ${viewedWeekKey ? "cette semaine-là" : "cette semaine"}.</p>`;
     }
   } else {
     const summary = getPeriodSummary(journalPeriod);
@@ -472,6 +508,16 @@ function renderJournal() {
       <p class="journal-entry-title">${periodChronicleTitle(journalPeriod)}</p>
       <p>${summary.activeDays} jour(s) actif(s), ${summary.reviewsCount} bilan(s) hebdo, ${summary.xp} XP gagné.</p>`;
   }
+
+  const todayBtn = document.querySelector('.journal-filter-btn[data-period="today"]');
+  todayBtn.textContent = viewedDayKey
+    ? new Date(viewedDayKey).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })
+    : "Aujourd'hui";
+
+  const weekBtn = document.querySelector('.journal-filter-btn[data-period="week"]');
+  weekBtn.textContent = viewedWeekKey
+    ? `S${viewedWeekKey.split("-W")[1]}`
+    : "1 semaine";
 
   list.appendChild(item);
 }
@@ -487,6 +533,39 @@ function openQuestEditor() {
       .forEach((quest) => addEditorRow(quest, questContainer));
   });
   document.querySelector("#questDialog").showModal();
+}
+
+function renderPastJournalCalendar() {
+  document.querySelector("#calendarMonthLabel").textContent =
+    calendarMonth.toLocaleDateString("fr-FR", {
+      month: "long",
+      year: "numeric",
+    });
+
+  const weeks = getMonthWeeks(calendarMonth);
+  const month = calendarMonth.getUTCMonth();
+  const weekdayLabels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+  let html = `<div class="calendar-grid">
+    <div class="calendar-cell calendar-header"></div>
+    ${weekdayLabels.map((d) => `<div class="calendar-cell calendar-header">${d}</div>`).join("")}`;
+
+  weeks.forEach((week) => {
+    const wKey = reviewKey(week[0]);
+    const hasReview = Boolean(state.reviews[wKey]);
+    const weekNum = wKey.split("-W")[1];
+    html += `<button type="button" class="calendar-cell calendar-week ${hasReview ? "has-entry" : ""}" data-week-key="${wKey}" ${hasReview ? "" : "disabled"}>S${weekNum}</button>`;
+
+    week.forEach((day) => {
+      const inMonth = day.getUTCMonth() === month;
+      const dKey = dateKey(day);
+      const hasNote = inMonth && Boolean(state.days[dKey]?.initiative);
+      html += `<button type="button" class="calendar-cell calendar-day ${inMonth ? "" : "outside"} ${hasNote ? "has-entry" : ""}" data-day-key="${dKey}" ${hasNote ? "" : "disabled"}>${day.getUTCDate()}</button>`;
+    });
+  });
+
+  html += `</div>`;
+  document.querySelector("#pastJournalCalendar").innerHTML = html;
 }
 
 function addCategoryEditorGroup(
@@ -620,6 +699,8 @@ document.querySelectorAll(".journal-filter-btn").forEach((btn) => {
       btn.classList.add("active");
       journalPeriod = btn.dataset.period;
       journalCollapsed = false;
+      viewedDayKey = null;
+      viewedWeekKey = null;
     }
 
     renderJournal();
@@ -721,6 +802,69 @@ document.querySelector("#installBtn").addEventListener("click", async () => {
   document.querySelector("#installBtn").classList.add("hidden");
 });
 
+document.querySelector("#pastJournalBtn").addEventListener("click", () => {
+  calendarMonth = new Date();
+  renderPastJournalCalendar();
+  document.querySelector("#pastJournalDialog").showModal();
+});
+
+document.querySelector("#closePastJournalBtn").addEventListener("click", () => {
+  document.querySelector("#pastJournalDialog").close();
+});
+
+document.querySelector("#prevMonthBtn").addEventListener("click", () => {
+  calendarMonth.setUTCMonth(calendarMonth.getUTCMonth() - 1);
+  renderPastJournalCalendar();
+});
+
+document.querySelector("#nextMonthBtn").addEventListener("click", () => {
+  calendarMonth.setUTCMonth(calendarMonth.getUTCMonth() + 1);
+  renderPastJournalCalendar();
+});
+
+document
+  .querySelector("#pastJournalCalendar")
+  .addEventListener("click", (event) => {
+    const dayBtn = event.target.closest(".calendar-day");
+    if (dayBtn && !dayBtn.disabled) {
+      viewedDayKey = dayBtn.dataset.dayKey;
+      viewedWeekKey = null;
+      journalPeriod = "today";
+      journalCollapsed = false;
+      document
+        .querySelectorAll(".journal-filter-btn")
+        .forEach((b) =>
+          b.classList.toggle("active", b.dataset.period === "today"),
+        );
+      document.querySelector("#pastJournalDialog").close();
+      renderJournal();
+      return;
+    }
+
+    const weekBtn = event.target.closest(".calendar-week");
+    if (weekBtn && !weekBtn.disabled) {
+      viewedWeekKey = weekBtn.dataset.weekKey;
+      viewedDayKey = null;
+      journalPeriod = "week";
+      journalCollapsed = false;
+      document
+        .querySelectorAll(".journal-filter-btn")
+        .forEach((b) =>
+          b.classList.toggle("active", b.dataset.period === "week"),
+        );
+      document.querySelector("#pastJournalDialog").close();
+      renderJournal();
+    }
+  });
+
+document.querySelector("#journalList").addEventListener("click", (event) => {
+  const backBtn = event.target.closest(".journal-back-btn");
+  if (!backBtn) return;
+  if (backBtn.dataset.back === "today") viewedDayKey = null;
+  if (backBtn.dataset.back === "week") viewedWeekKey = null;
+  renderJournal();
+});
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js").catch(console.error);
@@ -738,5 +882,5 @@ function numberButtons() {
 numberButtons();
 new MutationObserver(numberButtons).observe(document.body, {
   childList: true,
-  subtree: true
+  subtree: true,
 });

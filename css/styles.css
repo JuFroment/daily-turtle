@@ -62,7 +62,12 @@
   --level-badge-text: #ffffff;
 
   --progress-track: #e8dbc0;
-  --progress-fill: linear-gradient(90deg, #92400e, #d4a017 50%, transparent 100%);
+  --progress-fill: linear-gradient(
+    90deg,
+    #92400e,
+    #d4a017 50%,
+    transparent 100%
+  );
 
   --checkbox-accent: #6b8e23;
   --quest-xp: #b5651d;
@@ -152,13 +157,13 @@ button.text-btn {
   padding: 0.4rem;
 }
 
-button:not(.text-btn)[data-btn-variant="1"],
-button:not(.text-btn)[data-btn-variant="6"] {
+button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="1"],
+button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="6"] {
   position: relative;
 }
 
-button:not(.text-btn)[data-btn-variant="1"]::before,
-button:not(.text-btn)[data-btn-variant="6"]::before {
+button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="1"]::before,
+button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="6"]::before {
   content: "";
   position: absolute;
   inset: -2px;
@@ -168,11 +173,11 @@ button:not(.text-btn)[data-btn-variant="6"]::before {
   pointer-events: none;
 }
 
-button:not(.text-btn)[data-btn-variant="3"] {
+button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="3"] {
   border-radius: 0 12px 12px 12px;
 }
 
-button:not(.text-btn)[data-btn-variant="8"] {
+button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="8"] {
   border-radius: 12px 12px 0 12px;
 }
 
@@ -282,7 +287,6 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin: 1rem 0;
 }
 
 .journal-filter-btn {
@@ -296,6 +300,84 @@ main {
   color: var(--button-text);
 }
 
+.journal-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+#pastJournalBtn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+#pastJournalBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(74, 54, 36, 0.25);
+}
+
+dialog::backdrop {
+  background: var(--dialog-backdrop);
+  backdrop-filter: blur(4px);
+}
+
+#pastJournalDialog {
+  padding: 1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.3rem;
+  margin-top: 0.8rem;
+}
+
+.calendar-cell {
+  border: 0;
+  border-radius: 8px;
+  padding: 0.4rem 0.2rem;
+  text-align: center;
+  font-size: 0.8rem;
+  background: transparent;
+}
+
+.calendar-header {
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.calendar-day,
+.calendar-week {
+  background: var(--surface-interactive);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.calendar-day.outside {
+  visibility: hidden;
+}
+
+.calendar-day.has-entry {
+  background: var(--button-background);
+  color: var(--button-text);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.calendar-week.has-entry {
+  background: var(--quest-xp);
+  color: var(--pill-text);
+  cursor: pointer;
+  opacity: 1;
+  font-weight: 700;
+}
 .journal-list {
   display: flex;
   flex-direction: column;
@@ -432,7 +514,11 @@ h2 {
 }
 .progress {
   height: 12px;
-  background: linear-gradient(90deg, var(--progress-track) 55%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    var(--progress-track) 55%,
+    transparent 100%
+  );
   border-radius: 999px;
   overflow: hidden;
 }
@@ -458,26 +544,94 @@ h2 {
 }
 .stats-grid div:nth-child(1) {
   clip-path: polygon(
-    3% 4%, 10% 0%, 22% 2%, 35% 0%, 48% 3%, 62% 0%, 75% 2%, 88% 0%, 97% 5%,
-    100% 15%, 94% 30%, 100% 45%, 100% 65%, 96% 82%, 100% 92%,
-    85% 100%, 70% 97%, 55% 100%, 40% 98%, 25% 100%, 12% 97%, 2% 100%,
-    0% 90%, 4% 80%, 1% 68%, 3% 55%, 0% 44%, 3% 33%, 1% 20%, 0% 10%
+    3% 4%,
+    10% 0%,
+    22% 2%,
+    35% 0%,
+    48% 3%,
+    62% 0%,
+    75% 2%,
+    88% 0%,
+    97% 5%,
+    100% 15%,
+    94% 30%,
+    100% 45%,
+    100% 65%,
+    96% 82%,
+    100% 92%,
+    85% 100%,
+    70% 97%,
+    55% 100%,
+    40% 98%,
+    25% 100%,
+    12% 97%,
+    2% 100%,
+    0% 90%,
+    4% 80%,
+    1% 68%,
+    3% 55%,
+    0% 44%,
+    3% 33%,
+    1% 20%,
+    0% 10%
   );
 }
 .stats-grid div:nth-child(2) {
   clip-path: polygon(
-    5% 2%, 16% 6%, 28% 0%, 40% 4%, 53% 0%, 66% 5%, 80% 1%, 93% 6%,
-    100% 20%, 97% 38%, 100% 58%, 95% 78%, 100% 94%,
-    88% 100%, 75% 95%, 60% 100%, 46% 96%, 32% 100%, 18% 95%, 4% 100%,
-    0% 85%, 5% 70%, 2% 52%, 6% 36%, 0% 18%
+    5% 2%,
+    16% 6%,
+    28% 0%,
+    40% 4%,
+    53% 0%,
+    66% 5%,
+    80% 1%,
+    93% 6%,
+    100% 20%,
+    97% 38%,
+    100% 58%,
+    95% 78%,
+    100% 94%,
+    88% 100%,
+    75% 95%,
+    60% 100%,
+    46% 96%,
+    32% 100%,
+    18% 95%,
+    4% 100%,
+    0% 85%,
+    5% 70%,
+    2% 52%,
+    6% 36%,
+    0% 18%
   );
 }
 .stats-grid div:nth-child(3) {
   clip-path: polygon(
-    2% 6%, 12% 0%, 25% 5%, 38% 1%, 50% 6%, 63% 0%, 77% 4%, 90% 0%, 98% 7%,
-    100% 25%, 96% 45%, 100% 60%, 94% 80%, 100% 96%,
-    82% 100%, 68% 94%, 54% 100%, 40% 95%, 26% 100%, 10% 94%,
-    0% 82%, 4% 65%, 0% 48%, 5% 30%, 1% 14%
+    2% 6%,
+    12% 0%,
+    25% 5%,
+    38% 1%,
+    50% 6%,
+    63% 0%,
+    77% 4%,
+    90% 0%,
+    98% 7%,
+    100% 25%,
+    96% 45%,
+    100% 60%,
+    94% 80%,
+    100% 96%,
+    82% 100%,
+    68% 94%,
+    54% 100%,
+    40% 95%,
+    26% 100%,
+    10% 94%,
+    0% 82%,
+    4% 65%,
+    0% 48%,
+    5% 30%,
+    1% 14%
   );
 }
 
@@ -563,10 +717,32 @@ h2 {
 
 .category-card:last-child .category-card-inner {
   clip-path: polygon(
-    4% 6%, 14% 0%, 26% 5%, 39% 1%, 52% 6%, 65% 0%, 78% 5%, 91% 0%, 98% 7%,
-    100% 20%, 97.5% 42%, 100% 60%, 97% 80%, 100% 95%,
-    88% 100%, 74% 95%, 60% 100%, 46% 95%, 32% 100%, 18% 95%, 4% 100%,
-    0% 85%, 1.5% 68%, 0% 50%, 2% 32%, 0% 15%
+    4% 6%,
+    14% 0%,
+    26% 5%,
+    39% 1%,
+    52% 6%,
+    65% 0%,
+    78% 5%,
+    91% 0%,
+    98% 7%,
+    100% 20%,
+    97.5% 42%,
+    100% 60%,
+    97% 80%,
+    100% 95%,
+    88% 100%,
+    74% 95%,
+    60% 100%,
+    46% 95%,
+    32% 100%,
+    18% 95%,
+    4% 100%,
+    0% 85%,
+    1.5% 68%,
+    0% 50%,
+    2% 32%,
+    0% 15%
   );
 }
 .category-card:last-child::before {
@@ -582,13 +758,32 @@ h2 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   z-index: 2;
   clip-path: polygon(
-    0% 0%, 10% 22%, 20% 0%, 30% 22%, 40% 0%, 50% 22%, 60% 0%, 70% 22%, 80% 0%, 90% 22%, 100% 0%,
+    0% 0%,
+    10% 22%,
+    20% 0%,
+    30% 22%,
+    40% 0%,
+    50% 22%,
+    60% 0%,
+    70% 22%,
+    80% 0%,
+    90% 22%,
+    100% 0%,
     100% 78%,
-    90% 100%, 80% 78%, 70% 100%, 60% 78%, 50% 100%, 40% 78%, 30% 100%, 20% 78%, 10% 100%, 0% 78%
+    90% 100%,
+    80% 78%,
+    70% 100%,
+    60% 78%,
+    50% 100%,
+    40% 78%,
+    30% 100%,
+    20% 78%,
+    10% 100%,
+    0% 78%
   );
 }
 
-.category-card:nth-child(3n+1) .category-header {
+.category-card:nth-child(3n + 1) .category-header {
   background-color: transparent;
   background-image:
     linear-gradient(90deg, var(--surface-interactive) 45%, transparent 57%),
@@ -596,11 +791,15 @@ h2 {
     linear-gradient(90deg, var(--surface-interactive) 51%, transparent 63%),
     linear-gradient(90deg, var(--surface-interactive) 47%, transparent 59%);
   background-size: 100% 25%;
-  background-position: 0 0%, 0 33.333%, 0 66.667%, 0 100%;
+  background-position:
+    0 0%,
+    0 33.333%,
+    0 66.667%,
+    0 100%;
   background-repeat: no-repeat;
 }
 
-.category-card:nth-child(3n+2) .category-header {
+.category-card:nth-child(3n + 2) .category-header {
   background-color: transparent;
   background-image:
     linear-gradient(90deg, var(--surface-interactive) 33%, transparent 45%),
@@ -608,7 +807,11 @@ h2 {
     linear-gradient(90deg, var(--surface-interactive) 35%, transparent 47%),
     linear-gradient(90deg, var(--surface-interactive) 32%, transparent 44%);
   background-size: 100% 25%;
-  background-position: 0 0%, 0 33.333%, 0 66.667%, 0 100%;
+  background-position:
+    0 0%,
+    0 33.333%,
+    0 66.667%,
+    0 100%;
   background-repeat: no-repeat;
 }
 
@@ -620,7 +823,11 @@ h2 {
     linear-gradient(90deg, var(--surface-interactive) 56%, transparent 68%),
     linear-gradient(90deg, var(--surface-interactive) 63%, transparent 75%);
   background-size: 100% 25%;
-  background-position: 0 0%, 0 33.333%, 0 66.667%, 0 100%;
+  background-position:
+    0 0%,
+    0 33.333%,
+    0 66.667%,
+    0 100%;
   background-repeat: no-repeat;
 }
 
@@ -629,7 +836,6 @@ h2 {
   padding-left: 1.8rem;
   padding-right: 1.8rem;
 }
-
 
 .category-name {
   font-weight: 700;
@@ -767,8 +973,47 @@ h2 {
 #backlogInput {
   background-color: var(--input-background);
   clip-path: polygon(
-    0% 2%, 6% 0%, 11.5% 4%, 12.5% 12%, 14.5% 1%, 21% 3%, 28% 0%, 35% 4%, 44% 1%, 44.8% 32%, 47% 2%, 54% 0%, 61% 3%, 69% 1%, 76% 4%, 83% 0%, 83.5% 10%, 85.5% 2%, 93% 4%, 100% 0%,
-    100% 98%, 94% 100%, 88% 97%, 87.5% 89%, 85% 99%, 79% 96%, 72% 100%, 65% 97%, 58% 99%, 57.2% 68%, 55% 98%, 48% 100%, 41% 97%, 33% 99%, 26% 96%, 24% 100%, 23.5% 93%, 21.5% 99%, 14% 96%, 7% 100%, 0% 98%
+    0% 2%,
+    6% 0%,
+    11.5% 4%,
+    12.5% 12%,
+    14.5% 1%,
+    21% 3%,
+    28% 0%,
+    35% 4%,
+    44% 1%,
+    44.8% 32%,
+    47% 2%,
+    54% 0%,
+    61% 3%,
+    69% 1%,
+    76% 4%,
+    83% 0%,
+    83.5% 10%,
+    85.5% 2%,
+    93% 4%,
+    100% 0%,
+    100% 98%,
+    94% 100%,
+    88% 97%,
+    87.5% 89%,
+    85% 99%,
+    79% 96%,
+    72% 100%,
+    65% 97%,
+    58% 99%,
+    57.2% 68%,
+    55% 98%,
+    48% 100%,
+    41% 97%,
+    33% 99%,
+    26% 96%,
+    24% 100%,
+    23.5% 93%,
+    21.5% 99%,
+    14% 96%,
+    7% 100%,
+    0% 98%
   );
 }
 
@@ -815,7 +1060,16 @@ textarea {
 #initiativeNote {
   background-color: var(--input-background);
   clip-path: polygon(
-    0% 0%, 96.5% 0%, 100% 7%, 97% 18%, 100% 30%, 96.5% 42%, 100% 54%, 97% 66%, 100% 78%, 100% 100%,
+    0% 0%,
+    96.5% 0%,
+    100% 7%,
+    97% 18%,
+    100% 30%,
+    96.5% 42%,
+    100% 54%,
+    97% 66%,
+    100% 78%,
+    100% 100%,
     0% 100%
   );
 }
@@ -823,7 +1077,16 @@ textarea {
 #proudInput {
   background-color: var(--input-background);
   clip-path: polygon(
-    0% 0%, 96.5% 0%, 100% 9%, 97.5% 20%, 100% 33%, 96.5% 46%, 100% 58%, 97.5% 70%, 100% 82%, 100% 100%,
+    0% 0%,
+    96.5% 0%,
+    100% 9%,
+    97.5% 20%,
+    100% 33%,
+    96.5% 46%,
+    100% 58%,
+    97.5% 70%,
+    100% 82%,
+    100% 100%,
     0% 100%
   );
 }
@@ -831,7 +1094,16 @@ textarea {
 #obstacleInput {
   background-color: var(--input-background);
   clip-path: polygon(
-    0% 0%, 96% 0%, 100% 8%, 97% 22%, 100% 36%, 96% 50%, 100% 64%, 97% 76%, 100% 88%, 100% 100%,
+    0% 0%,
+    96% 0%,
+    100% 8%,
+    97% 22%,
+    100% 36%,
+    96% 50%,
+    100% 64%,
+    97% 76%,
+    100% 88%,
+    100% 100%,
     0% 100%
   );
 }
@@ -839,11 +1111,19 @@ textarea {
 #priorityInput {
   background-color: var(--input-background);
   clip-path: polygon(
-    0% 0%, 97% 0%, 100% 6%, 98% 17%, 100% 28%, 97% 40%, 100% 52%, 98% 64%, 100% 76%, 100% 100%,
+    0% 0%,
+    97% 0%,
+    100% 6%,
+    98% 17%,
+    100% 28%,
+    97% 40%,
+    100% 52%,
+    98% 64%,
+    100% 76%,
+    100% 100%,
     0% 100%
   );
 }
-
 
 label {
   display: block;
@@ -906,16 +1186,12 @@ label {
 }
 .day-cell:nth-child(1):not(.today),
 .day-cell:nth-child(4):not(.today) {
-  clip-path: polygon(
-    0% 0%, 100% 0%, 100% 100%, 22% 100%, 0% 78%
-  );
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 22% 100%, 0% 78%);
 }
 
 .day-cell:nth-child(2):not(.today),
 .day-cell:nth-child(7):not(.today) {
-  clip-path: polygon(
-    0% 0%, 78% 0%, 100% 22%, 100% 100%, 0% 100%
-  );
+  clip-path: polygon(0% 0%, 78% 0%, 100% 22%, 100% 100%, 0% 100%);
 }
 
 .week-grid .day-cell.today {
@@ -1017,12 +1293,12 @@ dialog form {
   padding: 0.7rem;
 }
 
-.editor-row:nth-child(3n+1) input[type="text"],
-.editor-row:nth-child(3n+1) input[type="number"] {
+.editor-row:nth-child(3n + 1) input[type="text"],
+.editor-row:nth-child(3n + 1) input[type="number"] {
   background-color: color-mix(in srgb, var(--input-background) 92%, #4a3624 8%);
 }
-.editor-row:nth-child(3n+2) input[type="text"],
-.editor-row:nth-child(3n+2) input[type="number"] {
+.editor-row:nth-child(3n + 2) input[type="text"],
+.editor-row:nth-child(3n + 2) input[type="number"] {
   background-color: color-mix(in srgb, var(--input-background) 92%, #b5651d 8%);
 }
 
