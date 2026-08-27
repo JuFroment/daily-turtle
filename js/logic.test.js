@@ -39,28 +39,28 @@ test("globalLevelUpCost grows every two levels", () => {
   assert.equal(globalLevelUpCost(4), 4);
 });
 
-test("getTotalXp sums XP for all completed quests across all days", () => {
+test("getTotalXp adds bonus XP for quests with a checked bonus", () => {
   const quests = [
-    { id: "a", xp: 10 },
+    { id: "a", xp: 10, bonusXp: 5 },
     { id: "b", xp: 20 }
   ];
   const days = {
-    "2026-08-20": { completed: ["a"] },
-    "2026-08-21": { completed: ["a", "b"] }
+    "2026-08-21": { completed: ["a", "b"], bonusCompleted: ["a"] }
   };
-  assert.equal(getTotalXp(days, quests), 40);
+  assert.equal(getTotalXp(days, quests), 35);
 });
 
-test("categoryXp only counts quests from the given category", () => {
+test("categoryXp adds bonus XP only for quests in the given category", () => {
   const quests = [
-    { id: "a", xp: 10, categoryId: "corps" },
-    { id: "b", xp: 20, categoryId: "esprit" }
+    { id: "a", xp: 10, bonusXp: 5, categoryId: "corps" },
+    { id: "b", xp: 20, bonusXp: 8, categoryId: "esprit" }
   ];
   const days = {
-    "2026-08-21": { completed: ["a", "b"] }
+    "2026-08-21": { completed: ["a", "b"], bonusCompleted: ["a", "b"] }
   };
-  assert.equal(categoryXp(days, quests, "corps"), 10);
+  assert.equal(categoryXp(days, quests, "corps"), 15);
 });
+
 
 test("totalSkillPoints sums the levels gained across all categories", () => {
   const categories = [{ id: "corps" }, { id: "esprit" }];
