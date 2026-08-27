@@ -684,6 +684,45 @@ h2 {
   font-size: 0.85rem;
 }
 
+.quest-bonus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0.3rem 0 0 1.2rem;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.quest-bonus input {
+  width: 14px;
+  height: 14px;
+}
+
+.quest-bonus .quest-title {
+  font-weight: 400;
+  font-size: 0.8rem;
+  text-decoration: underline dotted;
+}
+
+.quest-bonus .quest-xp {
+  font-size: 0.7rem;
+}
+
+.quest-bonus.done {
+  background: none;
+  border: none;
+}
+
+.quest-bonus.done .quest-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+
 .category-header {
   width: 100%;
   display: flex;
@@ -1288,13 +1327,26 @@ dialog form {
   padding: 1rem;
 }
 .editor-row {
+  margin: 0.65rem 0;
+}
+.editor-row-main {
   display: grid;
   grid-template-columns: 1fr 90px auto;
   gap: 0.5rem;
-  margin: 0.65rem 0;
 }
-.editor-row button {
+.editor-row-main button {
   padding: 0.7rem;
+}
+.editor-row-bonus {
+  display: grid;
+  grid-template-columns: 1fr 70px;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+.editor-row-bonus input {
+  font-size: 0.8rem;
+  padding: 0.5rem 0.6rem;
+  opacity: 0.85;
 }
 
 .editor-row:nth-child(3n + 1) input[type="text"],
@@ -1338,10 +1390,10 @@ menu {
   .stats-grid {
     grid-template-columns: 1fr 1fr 1fr;
   }
-  .editor-row {
+  .editor-row-main {
     grid-template-columns: 1fr 72px;
   }
-  .editor-row button {
+  .editor-row-main button {
     grid-column: 1 / -1;
   }
   .hero {

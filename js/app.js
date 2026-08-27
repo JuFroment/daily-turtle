@@ -214,6 +214,7 @@ function renderCategories() {
       list.className = "quest-list";
       categoryQuests.forEach((quest) => {
         const isDone = day.completed.includes(quest.id);
+        const isBonusDone = (day.bonusCompleted || []).includes(quest.id);
         const label = document.createElement("label");
         label.className = `quest ${isDone ? "done" : ""}`;
         label.innerHTML = `
@@ -229,12 +230,40 @@ function renderCategories() {
             todayData.completed = todayData.completed.filter(
               (id) => id !== quest.id,
             );
+            todayData.bonusCompleted = (todayData.bonusCompleted || []).filter(
+              (id) => id !== quest.id,
+            );
           }
           saveState();
           render();
         });
         list.appendChild(label);
+
+        if (quest.bonusLabel && isDone) {
+          const bonusLabel = document.createElement("label");
+          bonusLabel.className = `quest quest-bonus ${isBonusDone ? "done" : ""}`;
+          bonusLabel.innerHTML = `
+      <input type="checkbox" ${isBonusDone ? "checked" : ""} aria-label="${escapeHtml(quest.bonusLabel)}" />
+      <span class="quest-title">${escapeHtml(quest.bonusLabel)}</span>
+      <span class="quest-xp">+${quest.bonusXp} XP</span>`;
+          bonusLabel.querySelector("input").addEventListener("change", (event) => {
+            const todayData = currentDay();
+            if (!todayData.bonusCompleted) todayData.bonusCompleted = [];
+            if (event.target.checked) {
+              if (!todayData.bonusCompleted.includes(quest.id))
+                todayData.bonusCompleted.push(quest.id);
+            } else {
+              todayData.bonusCompleted = todayData.bonusCompleted.filter(
+                (id) => id !== quest.id,
+              );
+            }
+            saveState();
+            render();
+          });
+          list.appendChild(bonusLabel);
+        }
       });
+
       body.appendChild(list);
       inner.appendChild(body);
     }
@@ -509,12 +538,19 @@ function renderJournal() {
       <p>${summary.activeDays} jour(s) actif(s), ${summary.reviewsCount} bilan(s) hebdo, ${summary.xp} XP gagné.</p>`;
   }
 
-  const todayBtn = document.querySelector('.journal-filter-btn[data-period="today"]');
+  const todayBtn = document.querySelector(
+    '.journal-filter-btn[data-period="today"]',
+  );
   todayBtn.textContent = viewedDayKey
-    ? new Date(viewedDayKey).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })
+    ? new Date(viewedDayKey).toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+      })
     : "Aujourd'hui";
 
-  const weekBtn = document.querySelector('.journal-filter-btn[data-period="week"]');
+  const weekBtn = document.querySelector(
+    '.journal-filter-btn[data-period="week"]',
+  );
   weekBtn.textContent = viewedWeekKey
     ? `S${viewedWeekKey.split("-W")[1]}`
     : "1 semaine";
@@ -597,16 +633,28 @@ function addCategoryEditorGroup(
 }
 
 function addEditorRow(
-  quest = { id: crypto.randomUUID(), title: "", xp: 10 },
+  quest = {
+    id: crypto.randomUUID(),
+    title: "",
+    xp: 10,
+    bonusLabel: "",
+    bonusXp: 0,
+  },
   container,
 ) {
   const row = document.createElement("div");
   row.className = "editor-row";
   row.dataset.id = quest.id;
   row.innerHTML = `
-    <input type="text" value="${escapeHtml(quest.title)}" placeholder="Nom de la quête" />
-    <input type="number" min="1" max="100" value="${quest.xp}" aria-label="Points d'expérience" />
-    <button type="button" class="danger">Supprimer</button>`;
+    <div class="editor-row-main">
+      <input type="text" class="quest-title-input" value="${escapeHtml(quest.title)}" placeholder="Nom de la quête" />
+      <input type="number" class="quest-xp-input" min="1" max="100" value="${quest.xp}" aria-label="Points d'expérience" />
+      <button type="button" class="danger">Supprimer</button>
+    </div>
+    <div class="editor-row-bonus">
+      <input type="text" class="quest-bonus-label-input" value="${escapeHtml(quest.bonusLabel || "")}" placeholder="Bonus (optionnel)" />
+      <input type="number" class="quest-bonus-xp-input" min="0" max="100" value="${quest.bonusXp || 0}" aria-label="XP bonus" />
+    </div>`;
   row.querySelector("button").addEventListener("click", () => row.remove());
   container.appendChild(row);
 }
@@ -738,16 +786,22 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", (event) => {
     const categoryId = group.dataset.id;
     if (!categories.some((c) => c.id === categoryId)) return;
     group.querySelectorAll(".editor-row").forEach((row) => {
-      const title = row.querySelector('input[type="text"]').value.trim();
+      const title = row.querySelector(".quest-title-input").value.trim();
       if (!title) return;
+      const bonusLabel = row
+        .querySelector(".quest-bonus-label-input")
+        .value.trim();
+      const bonusXp =
+        Number(row.querySelector(".quest-bonus-xp-input").value) || 0;
       quests.push({
         id: row.dataset.id,
         title,
         xp: Math.max(
           1,
-          Number(row.querySelector('input[type="number"]').value) || 10,
+          Number(row.querySelector(".quest-xp-input").value) || 10,
         ),
         categoryId,
+        ...(bonusLabel ? { bonusLabel, bonusXp: Math.max(0, bonusXp) } : {}),
       });
     });
   });
