@@ -303,11 +303,14 @@ main {
 
 .journal-filters-row {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.9rem;
   margin: 1rem 0;
+}
+
+.journal-filters {
+  justify-content: center;
 }
 
 #pastJournalBtn {
@@ -1347,15 +1350,6 @@ menu {
   .hero-actions {
     flex-direction: column;
     align-items: flex-end;
-  }
-  .journal-filters-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.9rem;
-  }
-
-  .journal-filters {
-    justify-content: center;
   }
   #journalList {
     margin-top: 0.5rem;
