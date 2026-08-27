@@ -39,6 +39,29 @@ test("globalLevelUpCost grows every two levels", () => {
   assert.equal(globalLevelUpCost(4), 4);
 });
 
+test("getTotalXp sums XP for all completed quests across all days", () => {
+  const quests = [
+    { id: "a", xp: 10 },
+    { id: "b", xp: 20 }
+  ];
+  const days = {
+    "2026-08-20": { completed: ["a"] },
+    "2026-08-21": { completed: ["a", "b"] }
+  };
+  assert.equal(getTotalXp(days, quests), 40);
+});
+
+test("categoryXp only counts quests from the given category", () => {
+  const quests = [
+    { id: "a", xp: 10, categoryId: "corps" },
+    { id: "b", xp: 20, categoryId: "esprit" }
+  ];
+  const days = {
+    "2026-08-21": { completed: ["a", "b"] }
+  };
+  assert.equal(categoryXp(days, quests, "corps"), 10);
+});
+
 test("getTotalXp adds bonus XP for quests with a checked bonus", () => {
   const quests = [
     { id: "a", xp: 10, bonusXp: 5 },
