@@ -1,3 +1,5 @@
 .claude/
 node_modules/
 css/styles.css.backup
+playwright-report/
+test-results/
