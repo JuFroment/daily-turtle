@@ -189,6 +189,7 @@ function renderCategories() {
     inner.className = "category-card-inner";
 
     const header = document.createElement("button");
+    header.id = `category-${category.id}`;
     header.type = "button";
     header.className = "category-header";
     header.innerHTML = `
@@ -202,6 +203,10 @@ function renderCategories() {
     header.addEventListener("click", () => {
       expandedCategoryId = isExpanded ? null : category.id;
       renderCategories();
+      document.getElementById(`category-${category.id}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     });
     inner.appendChild(header);
 
@@ -246,20 +251,22 @@ function renderCategories() {
       <input type="checkbox" ${isBonusDone ? "checked" : ""} aria-label="${escapeHtml(quest.bonusLabel)}" />
       <span class="quest-title">${escapeHtml(quest.bonusLabel)}</span>
       <span class="quest-xp">+${quest.bonusXp} XP</span>`;
-          bonusLabel.querySelector("input").addEventListener("change", (event) => {
-            const todayData = currentDay();
-            if (!todayData.bonusCompleted) todayData.bonusCompleted = [];
-            if (event.target.checked) {
-              if (!todayData.bonusCompleted.includes(quest.id))
-                todayData.bonusCompleted.push(quest.id);
-            } else {
-              todayData.bonusCompleted = todayData.bonusCompleted.filter(
-                (id) => id !== quest.id,
-              );
-            }
-            saveState();
-            render();
-          });
+          bonusLabel
+            .querySelector("input")
+            .addEventListener("change", (event) => {
+              const todayData = currentDay();
+              if (!todayData.bonusCompleted) todayData.bonusCompleted = [];
+              if (event.target.checked) {
+                if (!todayData.bonusCompleted.includes(quest.id))
+                  todayData.bonusCompleted.push(quest.id);
+              } else {
+                todayData.bonusCompleted = todayData.bonusCompleted.filter(
+                  (id) => id !== quest.id,
+                );
+              }
+              saveState();
+              render();
+            });
           list.appendChild(bonusLabel);
         }
       });
