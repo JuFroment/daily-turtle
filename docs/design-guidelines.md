@@ -50,6 +50,15 @@ Avoid unnecessary visual clutter.
 
 ---
 
+# Layout Structure
+
+- The app's content lives inside a single framed "page" surface on a flat background, rather than a stack of separately boxed cards.
+- Material Design is used as a *structural* inspiration only — elevation, one defined surface — not a visual theme change.
+- The parchment/RPG identity described above remains the actual visual theme; Material only informs how content is framed.
+- Sections within the page stay lightly separated (dividers, thin accents) rather than individually boxed/elevated.
+
+---
+
 # Quest Cards
 
 Quest cards should resemble:
