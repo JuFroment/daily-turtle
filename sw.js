@@ -1,13 +1,16 @@
-const CACHE = "Daily_Turtle-v5";
+const CACHE = "Daily_Turtle-v6";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/styles.css",
   "./js/app.js",
   "./manifest.json",
-  "./assets/icon.svg",
-  "./assets/icon-192.png",
-  "./assets/icon-512.png",
+  "./assets/mascot-192.png",
+  "./assets/mascot-512.png",
+  "./assets/mascot.png",
+  "./assets/feather-32.png",
+  "./assets/frog4-64.png",
+  "./assets/turtle-128.png",
   "./assets/fonts/victor-pixel.ttf",
   "./assets/fonts/Kalam-Regular.ttf"
 ];
