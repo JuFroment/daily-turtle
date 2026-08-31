@@ -1096,7 +1096,7 @@ textarea {
 #proudInput::placeholder,
 #obstacleInput::placeholder,
 #priorityInput::placeholder {
-  color: color-mix(in srgb, var(--text-primary) 70%, var(--text-muted) 30%);
+  color: color-mix(in srgb, var(--text-primary) 25%, var(--text-muted) 75%);
   opacity: 1;
 }
 
