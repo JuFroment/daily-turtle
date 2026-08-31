@@ -134,25 +134,29 @@ function getMonthWeeks(monthDate) {
   return weeks;
 }
 
+function normalizeState(saved) {
+  const categories = saved.categories?.length
+    ? saved.categories
+    : structuredClone(defaultState.categories);
+  const quests = saved.quests?.length
+    ? saved.quests
+    : structuredClone(defaultState.quests);
+  return {
+    ...structuredClone(defaultState),
+    ...saved,
+    categories,
+    quests: migrateQuestCategories(quests, categories),
+    days: saved.days || {},
+    reviews: saved.reviews || {},
+    backlog: saved.backlog || [],
+  };
+}
+
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!saved) return structuredClone(defaultState);
-    const categories = saved.categories?.length
-      ? saved.categories
-      : structuredClone(defaultState.categories);
-    const quests = saved.quests?.length
-      ? saved.quests
-      : structuredClone(defaultState.quests);
-    return {
-      ...structuredClone(defaultState),
-      ...saved,
-      categories,
-      quests: migrateQuestCategories(quests, categories),
-      days: saved.days || {},
-      reviews: saved.reviews || {},
-      backlog: saved.backlog || [],
-    };
+    return normalizeState(saved);
   } catch {
     return structuredClone(defaultState);
   }
@@ -840,6 +844,51 @@ document.querySelector("#exportBtn").addEventListener("click", () => {
   a.download = `quete-du-quotidien-${dateKey()}.json`;
   a.click();
   URL.revokeObjectURL(url);
+});
+
+document.querySelector("#importBtn").addEventListener("click", () => {
+  document.querySelector("#importFileInput").click();
+});
+
+document.querySelector("#importFileInput").addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    let imported;
+    try {
+      imported = JSON.parse(reader.result);
+    } catch {
+      alert("Ce fichier n'est pas un JSON valide.");
+      event.target.value = "";
+      return;
+    }
+
+    const isValid =
+      imported &&
+      typeof imported === "object" &&
+      Array.isArray(imported.categories) &&
+      Array.isArray(imported.quests) &&
+      typeof imported.days === "object";
+
+    if (!isValid) {
+      alert("Ce fichier ne semble pas être un export valide de Daily Turtle.");
+      event.target.value = "";
+      return;
+    }
+
+    if (!confirm("Importer ces données remplacera toutes tes données actuelles. Continuer ?")) {
+      event.target.value = "";
+      return;
+    }
+
+    state = normalizeState(imported);
+    saveState();
+    render();
+    event.target.value = "";
+  };
+  reader.readAsText(file);
 });
 
 document.querySelector("#resetBtn").addEventListener("click", () => {
