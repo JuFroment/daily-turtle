@@ -109,6 +109,9 @@ let expandedCategoryId = null;
 let calendarMonth = new Date();
 let viewedDayKey = null;
 let viewedWeekKey = null;
+let justCheckedBonusId = null;
+let previousCategoryLevels = {};
+let previousGlobalLevel = null;
 
 function getMonthWeeks(monthDate) {
   const year = monthDate.getUTCFullYear();
@@ -185,12 +188,15 @@ function renderCategories() {
     );
     const info = levelInfo(categoryXp(state.days, state.quests, category.id));
     const isExpanded = expandedCategoryId === category.id;
-
+    const previousLevel = previousCategoryLevels[category.id];
+    const justLeveledUp =
+      previousLevel !== undefined && info.level > previousLevel;
+    previousCategoryLevels[category.id] = info.level;
     const card = document.createElement("div");
     card.className = `category-card ${isExpanded ? "expanded" : ""}`;
 
     const inner = document.createElement("div");
-    inner.className = "category-card-inner";
+    inner.className = `category-card-inner${justLeveledUp ? " level-up-flash" : ""}`;
 
     const header = document.createElement("button");
     header.id = `category-${category.id}`;
@@ -203,7 +209,7 @@ function renderCategories() {
       <div class="category-mini-progress-bar" style="width: ${info.percent}%"></div>
     </div>
   </div>
-  <span class="category-level">Niv. ${info.level}</span>`;
+        <span class="category-level">Niv. ${info.level}</span>`;
     header.addEventListener("click", () => {
       expandedCategoryId = isExpanded ? null : category.id;
       renderCategories();
@@ -263,6 +269,7 @@ function renderCategories() {
               if (event.target.checked) {
                 if (!todayData.bonusCompleted.includes(quest.id))
                   todayData.bonusCompleted.push(quest.id);
+                justCheckedBonusId = quest.id;
               } else {
                 todayData.bonusCompleted = todayData.bonusCompleted.filter(
                   (id) => id !== quest.id,
@@ -271,6 +278,10 @@ function renderCategories() {
               saveState();
               render();
             });
+          if (quest.id === justCheckedBonusId) {
+            bonusLabel.classList.add("sparkle");
+            justCheckedBonusId = null;
+          }
           list.appendChild(bonusLabel);
         }
       });
@@ -296,6 +307,20 @@ function render() {
   const info = globalLevelInfo(
     totalSkillPoints(state.days, state.quests, state.categories),
   );
+  if (previousGlobalLevel !== null && info.level > previousGlobalLevel) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => {
+      const badge = document.querySelector(".level-badge");
+      const frog = document.querySelector(".frog-icon");
+      badge.classList.add("global-level-up");
+      frog.classList.add("frog-hop");
+      setTimeout(() => {
+        badge.classList.remove("global-level-up");
+        frog.classList.remove("frog-hop");
+      }, 900);
+    }, 400);
+  }
+  previousGlobalLevel = info.level;
   document.querySelector("#levelValue").textContent = info.level;
   document.querySelector("#rankLabel").textContent = rankForLevel(info.level);
   document.querySelector("#xpLabel").textContent =
@@ -850,46 +875,54 @@ document.querySelector("#importBtn").addEventListener("click", () => {
   document.querySelector("#importFileInput").click();
 });
 
-document.querySelector("#importFileInput").addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+document
+  .querySelector("#importFileInput")
+  .addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    let imported;
-    try {
-      imported = JSON.parse(reader.result);
-    } catch {
-      alert("Ce fichier n'est pas un JSON valide.");
+    const reader = new FileReader();
+    reader.onload = () => {
+      let imported;
+      try {
+        imported = JSON.parse(reader.result);
+      } catch {
+        alert("Ce fichier n'est pas un JSON valide.");
+        event.target.value = "";
+        return;
+      }
+
+      const isValid =
+        imported &&
+        typeof imported === "object" &&
+        Array.isArray(imported.categories) &&
+        Array.isArray(imported.quests) &&
+        typeof imported.days === "object";
+
+      if (!isValid) {
+        alert(
+          "Ce fichier ne semble pas être un export valide de Daily Turtle.",
+        );
+        event.target.value = "";
+        return;
+      }
+
+      if (
+        !confirm(
+          "Importer ces données remplacera toutes tes données actuelles. Continuer ?",
+        )
+      ) {
+        event.target.value = "";
+        return;
+      }
+
+      state = normalizeState(imported);
+      saveState();
+      render();
       event.target.value = "";
-      return;
-    }
-
-    const isValid =
-      imported &&
-      typeof imported === "object" &&
-      Array.isArray(imported.categories) &&
-      Array.isArray(imported.quests) &&
-      typeof imported.days === "object";
-
-    if (!isValid) {
-      alert("Ce fichier ne semble pas être un export valide de Daily Turtle.");
-      event.target.value = "";
-      return;
-    }
-
-    if (!confirm("Importer ces données remplacera toutes tes données actuelles. Continuer ?")) {
-      event.target.value = "";
-      return;
-    }
-
-    state = normalizeState(imported);
-    saveState();
-    render();
-    event.target.value = "";
-  };
-  reader.readAsText(file);
-});
+    };
+    reader.readAsText(file);
+  });
 
 document.querySelector("#resetBtn").addEventListener("click", () => {
   if (!confirm("Supprimer toutes les données et repartir de zéro ?")) return;
