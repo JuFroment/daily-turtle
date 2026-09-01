@@ -1,4 +1,4 @@
-const CACHE = "Daily_Turtle-v6";
+const CACHE = "Daily_Turtle-v7";
 const ASSETS = [
   "./",
   "./index.html",
@@ -6,7 +6,7 @@ const ASSETS = [
   "./js/app.js",
   "./manifest.json",
   "./assets/mascot-192.png",
-  "./assets/mascot-512.png",
+  "./assets/mascot-768.png",
   "./assets/mascot.png",
   "./assets/feather-32.png",
   "./assets/frog4-64.png",
