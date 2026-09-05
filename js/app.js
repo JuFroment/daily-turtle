@@ -1,11 +1,12 @@
 import {
   dateKey,
-  getTotalXp,
-  categoryXp,
+  appDate,
   levelInfo,
   rankForLevel,
+  getTotalXp,
+  categoryXp,
   totalSkillPoints,
-  globalLevelInfo,
+  globalLevelInfo
 } from "./logic.js";
 
 const STORAGE_KEY = "julien-rpg-tracker-v1";
@@ -296,7 +297,7 @@ function renderCategories() {
 }
 
 function render() {
-  const today = new Date();
+  const today = appDate();
   document.querySelector("#todayLabel").textContent = today.toLocaleDateString(
     "fr-FR",
     { weekday: "long", day: "numeric", month: "long" },
