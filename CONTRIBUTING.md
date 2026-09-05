@@ -70,6 +70,7 @@ git push
 git switch main
 git pull
 git branch -d feature/13-add-turtle-to-xp-bar
+git push origin --delete feature/13-add-turtle-to-xp-bar
 ```
 
 ## Commit Messages
