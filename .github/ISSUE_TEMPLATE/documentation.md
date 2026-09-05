@@ -20,6 +20,6 @@ Explain why this documentation is needed.
 
 ## Acceptance Criteria
 
-- [ ] 
-- [ ] 
-- [ ] 
+- [ ]
+- [ ]
+- [ ]

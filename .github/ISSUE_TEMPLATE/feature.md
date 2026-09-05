@@ -20,6 +20,6 @@ Explain why this feature is useful and what need it addresses.
 
 ## Acceptance Criteria
 
-- [ ] 
-- [ ] 
-- [ ] 
+- [ ]
+- [ ]
+- [ ]

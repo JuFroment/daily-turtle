@@ -28,11 +28,11 @@ export function globalLevelUpCost(level) {
 export function getTotalXp(days, quests) {
   return Object.values(days).reduce((total, day) => {
     const completedXp = (day.completed || []).reduce((sum, questId) => {
-      const quest = quests.find(q => q.id === questId);
+      const quest = quests.find((q) => q.id === questId);
       return sum + (quest?.xp || 0);
     }, 0);
     const bonusXp = (day.bonusCompleted || []).reduce((sum, questId) => {
-      const quest = quests.find(q => q.id === questId);
+      const quest = quests.find((q) => q.id === questId);
       return sum + (quest?.bonusXp || 0);
     }, 0);
     return total + completedXp + bonusXp;
@@ -42,17 +42,20 @@ export function getTotalXp(days, quests) {
 export function categoryXp(days, quests, categoryId) {
   return Object.values(days).reduce((total, day) => {
     const completedXp = (day.completed || []).reduce((sum, questId) => {
-      const quest = quests.find(q => q.id === questId && q.categoryId === categoryId);
+      const quest = quests.find(
+        (q) => q.id === questId && q.categoryId === categoryId,
+      );
       return sum + (quest?.xp || 0);
     }, 0);
     const bonusXp = (day.bonusCompleted || []).reduce((sum, questId) => {
-      const quest = quests.find(q => q.id === questId && q.categoryId === categoryId);
+      const quest = quests.find(
+        (q) => q.id === questId && q.categoryId === categoryId,
+      );
       return sum + (quest?.bonusXp || 0);
     }, 0);
     return total + completedXp + bonusXp;
   }, 0);
 }
-
 
 export function totalSkillPoints(days, quests, categories) {
   return categories.reduce((sum, category) => {
@@ -68,5 +71,10 @@ export function globalLevelInfo(totalPoints) {
     level++;
   }
   const needed = globalLevelUpCost(level);
-  return { level, current: remaining, needed, percent: Math.round((remaining / needed) * 100) };
+  return {
+    level,
+    current: remaining,
+    needed,
+    percent: Math.round((remaining / needed) * 100),
+  };
 }
