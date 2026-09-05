@@ -711,6 +711,47 @@ h2 {
   font-size: 0.85rem;
 }
 
+.journal-quest-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.journal-quest-title {
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.journal-quest-list li::before {
+  content: "✓ ";
+  color: var(--checkbox-accent);
+  font-weight: 700;
+}
+
+.journal-quest-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.2rem 0;
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.journal-quest-divider::before,
+.journal-quest-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--text-muted);
+  opacity: 0.4;
+}
+
 .quest-bonus {
   display: inline-flex;
   align-items: center;
