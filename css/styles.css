@@ -374,6 +374,56 @@ dialog::backdrop {
   opacity: 1;
 }
 
+.calendar-day.has-quests {
+  background: var(--success-surface);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.calendar-day.has-quests-and-note {
+  background: var(--quest-xp);
+  color: var(--pill-text);
+  cursor: pointer;
+  opacity: 1;
+}
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.calendar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.calendar-legend-swatch {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 3px;
+}
+
+.calendar-legend-swatch.has-quests {
+  background: var(--success-surface);
+  border: 1px solid var(--success-border);
+}
+
+.calendar-legend-swatch.has-quests-and-note {
+  background: var(--quest-xp);
+}
+
+.calendar-legend-swatch.has-entry {
+  background: var(--button-background);
+}
+
 .calendar-week.has-entry {
   background: var(--quest-xp);
   color: var(--pill-text);
