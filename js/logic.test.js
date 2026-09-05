@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   dateKey,
+  appDate,
   levelInfo,
   rankForLevel,
   globalLevelUpCost,
@@ -11,9 +12,25 @@ import {
   globalLevelInfo
 } from "./logic.js";
 
+
 test("dateKey formats a date as YYYY-MM-DD", () => {
   const date = new Date("2026-08-21T15:30:00Z");
   assert.equal(dateKey(date), "2026-08-21");
+});
+
+test("dateKey rolls a time before 6 AM UTC back to the previous day", () => {
+  const date = new Date("2026-08-22T03:00:00Z");
+  assert.equal(dateKey(date), "2026-08-21");
+});
+
+test("dateKey keeps a time at or after 6 AM UTC on the same day", () => {
+  const date = new Date("2026-08-22T06:00:00Z");
+  assert.equal(dateKey(date), "2026-08-22");
+});
+
+test("appDate shifts a time before 6 AM UTC to the previous calendar day", () => {
+  const date = new Date("2026-08-22T03:00:00Z");
+  assert.equal(appDate(date).toISOString().slice(0, 10), "2026-08-21");
 });
 
 test("levelInfo computes level 1 with no XP", () => {

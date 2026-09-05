@@ -1,5 +1,9 @@
+export function appDate(date = new Date()) {
+  return new Date(date.getTime() - 6 * 60 * 60 * 1000);
+}
+
 export function dateKey(date = new Date()) {
-  return date.toISOString().slice(0, 10);
+  return appDate(date).toISOString().slice(0, 10);
 }
 
 export function levelInfo(totalXp) {
