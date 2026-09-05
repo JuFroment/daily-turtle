@@ -20,6 +20,6 @@ Explain why this improvement is needed.
 
 ## Acceptance Criteria
 
-- [ ] 
-- [ ] 
-- [ ] 
+- [ ]
+- [ ]
+- [ ]

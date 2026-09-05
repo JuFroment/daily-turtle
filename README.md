@@ -46,7 +46,6 @@ Future:
 
 ## Project
 
-
 - 📋 [Project Board](...)
 - 🐞 [Issues](../../issues)
 - 📖 [Documentation](docs/)

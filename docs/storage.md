@@ -20,6 +20,7 @@ The state object mixes two kinds of data:
 
 **Configuration data** — set up once, rarely changed by the user, but
 still stored (not hardcoded), since the user can edit it:
+
 - `profileName` — the player's display name
 - `categories` — the life areas quests are grouped into (e.g. "Le Foyer",
   "Corps")
@@ -28,6 +29,7 @@ still stored (not hardcoded), since the user can edit it:
 
 **Generated data** — grows continuously as the user interacts with the
 app day to day:
+
 - `days` — a map keyed by date (`YYYY-MM-DD`), each entry tracking which
   quests were completed that day and an optional "initiative" note
 - `reviews` — a map keyed by period (week/month), storing retrospective
@@ -38,6 +40,7 @@ app day to day:
 ## Why localStorage
 
 This choice follows directly from the project's current constraints:
+
 - The app is deployed as a static site on GitHub Pages — no backend means
   no server-side storage option.
 - Daily Turtle is currently a personal tracker with no accounts or

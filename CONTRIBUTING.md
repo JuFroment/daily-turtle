@@ -37,7 +37,7 @@ The `main` branch is protected.
 
 ## Branch Naming
 
-Examples: 
+Examples:
 
 ```text
 feature/13-add-turtle-to-xp-bar
@@ -74,25 +74,27 @@ git branch -d feature/13-add-turtle-to-xp-bar
 
 ## Commit Messages
 
-General format: 
+General format:
+
 ```text
 <type>: <description>
 ```
 
-Example: 
+Example:
+
 ```text
 docs: add CONTRIBUTING.md
 ```
 
-| Type | When to use it | Example |
-|------|----------------|---------|
-| feat | New feature | `feat: add daily quest reset` |
-| fix | Bug fix | `fix: improve issue templates` |
-| docs | Documentation only | `docs: add CONTRIBUTING.md` |
-| refactor | Code restructuring without changing behavior | `refactor: simplify quest rendering` |
-| style | Code style changes that do not affect behavior | `style: format CSS files` |
-| test | Add or update tests | `test: add quest reset tests` |
-| chore | Maintenance tasks and tooling | `chore: update issue templates` |
+| Type     | When to use it                                 | Example                              |
+| -------- | ---------------------------------------------- | ------------------------------------ |
+| feat     | New feature                                    | `feat: add daily quest reset`        |
+| fix      | Bug fix                                        | `fix: improve issue templates`       |
+| docs     | Documentation only                             | `docs: add CONTRIBUTING.md`          |
+| refactor | Code restructuring without changing behavior   | `refactor: simplify quest rendering` |
+| style    | Code style changes that do not affect behavior | `style: format CSS files`            |
+| test     | Add or update tests                            | `test: add quest reset tests`        |
+| chore    | Maintenance tasks and tooling                  | `chore: update issue templates`      |
 
 ## Pull Requests
 
@@ -111,6 +113,7 @@ docs: add CONTRIBUTING.md
 
 A self-review should explain what has been verified before merging.
 Template for self reviews:
+
 ```
 Self-review completed.
 
@@ -140,7 +143,7 @@ Delete merged branches only after updating the local `main` branch.
 
 - A PR tells only one story.
 - Minor improvements related to the same topic can be grouped together.
-- New features deserve a new issue. 
+- New features deserve a new issue.
 
 ## Documentation
 

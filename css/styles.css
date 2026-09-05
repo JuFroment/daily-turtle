@@ -283,7 +283,6 @@ main {
   opacity: 0.6;
 }
 
-
 .journal-filters {
   display: flex;
   flex-wrap: wrap;
@@ -790,7 +789,6 @@ h2 {
   text-decoration: line-through;
   color: var(--text-muted);
 }
-
 
 .category-header {
   width: 100%;

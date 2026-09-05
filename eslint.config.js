@@ -9,9 +9,9 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
       globals: {
-        ...globals.browser
-      }
-    }
+        ...globals.browser,
+      },
+    },
   },
   {
     files: ["js/logic.test.js"],
@@ -19,8 +19,8 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
       globals: {
-        ...globals.node
-      }
-    }
-  }
+        ...globals.node,
+      },
+    },
+  },
 ];

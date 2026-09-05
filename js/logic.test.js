@@ -9,9 +9,8 @@ import {
   getTotalXp,
   categoryXp,
   totalSkillPoints,
-  globalLevelInfo
+  globalLevelInfo,
 } from "./logic.js";
-
 
 test("dateKey formats a date as YYYY-MM-DD", () => {
   const date = new Date("2026-08-21T15:30:00Z");
@@ -34,11 +33,21 @@ test("appDate shifts a time before 6 AM UTC to the previous calendar day", () =>
 });
 
 test("levelInfo computes level 1 with no XP", () => {
-  assert.deepEqual(levelInfo(0), { level: 1, current: 0, needed: 100, percent: 0 });
+  assert.deepEqual(levelInfo(0), {
+    level: 1,
+    current: 0,
+    needed: 100,
+    percent: 0,
+  });
 });
 
 test("levelInfo computes a higher level with partial progress", () => {
-  assert.deepEqual(levelInfo(250), { level: 3, current: 50, needed: 100, percent: 50 });
+  assert.deepEqual(levelInfo(250), {
+    level: 3,
+    current: 50,
+    needed: 100,
+    percent: 50,
+  });
 });
 
 test("rankForLevel returns the right rank at each threshold", () => {
@@ -59,11 +68,11 @@ test("globalLevelUpCost grows every two levels", () => {
 test("getTotalXp sums XP for all completed quests across all days", () => {
   const quests = [
     { id: "a", xp: 10 },
-    { id: "b", xp: 20 }
+    { id: "b", xp: 20 },
   ];
   const days = {
     "2026-08-20": { completed: ["a"] },
-    "2026-08-21": { completed: ["a", "b"] }
+    "2026-08-21": { completed: ["a", "b"] },
   };
   assert.equal(getTotalXp(days, quests), 40);
 });
@@ -71,10 +80,10 @@ test("getTotalXp sums XP for all completed quests across all days", () => {
 test("categoryXp only counts quests from the given category", () => {
   const quests = [
     { id: "a", xp: 10, categoryId: "corps" },
-    { id: "b", xp: 20, categoryId: "esprit" }
+    { id: "b", xp: 20, categoryId: "esprit" },
   ];
   const days = {
-    "2026-08-21": { completed: ["a", "b"] }
+    "2026-08-21": { completed: ["a", "b"] },
   };
   assert.equal(categoryXp(days, quests, "corps"), 10);
 });
@@ -82,10 +91,10 @@ test("categoryXp only counts quests from the given category", () => {
 test("getTotalXp adds bonus XP for quests with a checked bonus", () => {
   const quests = [
     { id: "a", xp: 10, bonusXp: 5 },
-    { id: "b", xp: 20 }
+    { id: "b", xp: 20 },
   ];
   const days = {
-    "2026-08-21": { completed: ["a", "b"], bonusCompleted: ["a"] }
+    "2026-08-21": { completed: ["a", "b"], bonusCompleted: ["a"] },
   };
   assert.equal(getTotalXp(days, quests), 35);
 });
@@ -93,23 +102,22 @@ test("getTotalXp adds bonus XP for quests with a checked bonus", () => {
 test("categoryXp adds bonus XP only for quests in the given category", () => {
   const quests = [
     { id: "a", xp: 10, bonusXp: 5, categoryId: "corps" },
-    { id: "b", xp: 20, bonusXp: 8, categoryId: "esprit" }
+    { id: "b", xp: 20, bonusXp: 8, categoryId: "esprit" },
   ];
   const days = {
-    "2026-08-21": { completed: ["a", "b"], bonusCompleted: ["a", "b"] }
+    "2026-08-21": { completed: ["a", "b"], bonusCompleted: ["a", "b"] },
   };
   assert.equal(categoryXp(days, quests, "corps"), 15);
 });
-
 
 test("totalSkillPoints sums the levels gained across all categories", () => {
   const categories = [{ id: "corps" }, { id: "esprit" }];
   const quests = [
     { id: "a", xp: 100, categoryId: "corps" },
-    { id: "b", xp: 50, categoryId: "esprit" }
+    { id: "b", xp: 50, categoryId: "esprit" },
   ];
   const days = {
-    "2026-08-21": { completed: ["a", "b"] }
+    "2026-08-21": { completed: ["a", "b"] },
   };
   // corps : 100 XP -> niveau 2 (niveau - 1 = 1 point)
   // esprit : 50 XP -> niveau 1 (niveau - 1 = 0 point)
@@ -117,6 +125,16 @@ test("totalSkillPoints sums the levels gained across all categories", () => {
 });
 
 test("globalLevelInfo computes the global level from accumulated skill points", () => {
-  assert.deepEqual(globalLevelInfo(0), { level: 1, current: 0, needed: 2, percent: 0 });
-  assert.deepEqual(globalLevelInfo(2), { level: 2, current: 0, needed: 3, percent: 0 });
+  assert.deepEqual(globalLevelInfo(0), {
+    level: 1,
+    current: 0,
+    needed: 2,
+    percent: 0,
+  });
+  assert.deepEqual(globalLevelInfo(2), {
+    level: 2,
+    current: 0,
+    needed: 3,
+    percent: 0,
+  });
 });

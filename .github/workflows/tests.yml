@@ -86,7 +86,7 @@ jobs:
         with:
           name: lighthouse-report
           path: lhci-report/
-          retention-days: 7       
+          retention-days: 7
 
   deploy:
     needs: [test, lighthouse, playwright]
