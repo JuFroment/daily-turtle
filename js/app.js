@@ -676,8 +676,15 @@ function renderPastJournalCalendar() {
     week.forEach((day) => {
       const inMonth = day.getUTCMonth() === month;
       const dKey = dateKey(day);
-      const hasNote = inMonth && Boolean(state.days[dKey]?.initiative);
-      html += `<button type="button" class="calendar-cell calendar-day ${inMonth ? "" : "outside"} ${hasNote ? "has-entry" : ""}" data-day-key="${dKey}" ${hasNote ? "" : "disabled"}>${day.getUTCDate()}</button>`;
+      const dayData = state.days[dKey];
+      const hasQuests = inMonth && Boolean(dayData?.completed?.length);
+      const hasNote = inMonth && Boolean(dayData?.initiative);
+      let stateClass = "";
+      if (hasQuests && hasNote) stateClass = "has-quests-and-note";
+      else if (hasQuests) stateClass = "has-quests";
+      else if (hasNote) stateClass = "has-entry";
+      const isSelectable = hasQuests || hasNote;
+      html += `<button type="button" class="calendar-cell calendar-day ${inMonth ? "" : "outside"} ${stateClass}" data-day-key="${dKey}" ${isSelectable ? "" : "disabled"}>${day.getUTCDate()}</button>`;
     });
   });
 
