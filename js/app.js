@@ -6,7 +6,7 @@ import {
   getTotalXp,
   categoryXp,
   totalSkillPoints,
-  globalLevelInfo
+  globalLevelInfo,
 } from "./logic.js";
 
 const STORAGE_KEY = "julien-rpg-tracker-v1";
@@ -78,6 +78,7 @@ const defaultState = {
   days: {},
   reviews: {},
   backlog: [],
+  questSort: {},
 };
 
 const TITLE_TO_CATEGORY = {
@@ -153,6 +154,7 @@ function normalizeState(saved) {
     days: saved.days || {},
     reviews: saved.reviews || {},
     backlog: saved.backlog || [],
+    questSort: saved.questSort || {},
   };
 }
 
@@ -226,9 +228,37 @@ function renderCategories() {
       body.className = "category-body";
       body.innerHTML = `<p class="muted category-description">${escapeHtml(category.description)}</p>`;
 
+      const sortOrder = state.questSort[category.id];
+      const isDesc = sortOrder === "desc";
+      const ascIcon = `<svg viewBox="0 0 24 20" width="24" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16V4M4 4L1 7M4 4l3 3"/><line x1="12" y1="6" x2="16" y2="6"/><line x1="12" y1="10" x2="18" y2="10"/><line x1="12" y1="14" x2="20" y2="14"/></svg>`;
+      const descIcon = `<svg viewBox="0 0 24 20" width="24" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v12M4 16l-3-3M4 16l3-3"/><line x1="12" y1="6" x2="20" y2="6"/><line x1="12" y1="10" x2="18" y2="10"/><line x1="12" y1="14" x2="16" y2="14"/></svg>`;
+
+      body.innerHTML = `
+        <div class="category-body-header row between">
+          <p class="muted category-description">${escapeHtml(category.description)}</p>
+          <div class="quest-sort-control row">
+            <span class="quest-sort-label">XP</span>
+            <button type="button" class="quest-sort-btn ${sortOrder ? "active" : ""}" aria-label="Trier par XP" title="Trier par XP">
+              ${isDesc ? descIcon : ascIcon}
+            </button>
+          </div>
+        </div>`;
+
+      body.querySelector(".quest-sort-btn").addEventListener("click", () => {
+        state.questSort[category.id] = isDesc ? "asc" : "desc";
+        saveState();
+        renderCategories();
+      });
+
+      const sortedQuests = sortOrder
+        ? [...categoryQuests].sort((a, b) =>
+            sortOrder === "asc" ? a.xp - b.xp : b.xp - a.xp,
+          )
+        : categoryQuests;
+
       const list = document.createElement("div");
       list.className = "quest-list";
-      categoryQuests.forEach((quest) => {
+      sortedQuests.forEach((quest) => {
         const isDone = day.completed.includes(quest.id);
         const isBonusDone = (day.bonusCompleted || []).includes(quest.id);
         const label = document.createElement("label");

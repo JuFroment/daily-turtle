@@ -438,6 +438,33 @@ h2 {
   justify-content: space-between;
 }
 
+.quest-sort-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.quest-sort-btn.active {
+  color: var(--button-background);
+  opacity: 1;
+}
+
+.quest-sort-control {
+  gap: 0.05rem;
+}
+
+.quest-sort-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .profile-heading {
   display: flex;
   align-items: center;
