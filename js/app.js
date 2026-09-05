@@ -574,14 +574,28 @@ function renderJournal() {
     const backLink = viewedDayKey
       ? `<button type="button" class="text-btn journal-back-btn" data-back="today">← Revenir à aujourd'hui</button>`
       : "";
-    if (today.initiative) {
-      item.innerHTML = `
+    const completedQuests = (today.completed || [])
+      .map((id) => state.quests.find((q) => q.id === id))
+      .filter(Boolean);
+    const questsSection = completedQuests.length
+      ? `<ul class="journal-quest-list">${completedQuests
+          .map(
+            (quest) =>
+              `<li>${escapeHtml(quest.title)} <span class="quest-xp">+${quest.xp} XP</span></li>`,
+          )
+          .join("")}</ul>`
+      : `<p class="muted">Aucune quête accomplie ${viewedDayKey ? "ce jour" : "aujourd'hui"}.</p>`;
+    const questsHtml = `
+      <div class="journal-quest-divider"><span>Quêtes accomplies</span></div>
+      ${questsSection}`;
+    const chronicleHtml = today.initiative
+      ? `<p>${escapeHtml(today.initiative)}</p>`
+      : `<p class="muted">Rien à afficher pour ${viewedDayKey ? "ce jour" : "aujourd'hui"}.</p>`;
+    item.innerHTML = `
       ${backLink}
       <p class="journal-entry-title">${dailyChronicleTitle(key)}</p>
-      <p>${escapeHtml(today.initiative)}</p>`;
-    } else {
-      item.innerHTML = `${backLink}<p class="muted">Rien à afficher pour ${viewedDayKey ? "ce jour" : "aujourd'hui"}.</p>`;
-    }
+      ${chronicleHtml}
+      ${questsHtml}`;
   } else if (journalPeriod === "week") {
     const key = viewedWeekKey || reviewKey();
     const review = state.reviews[key];
