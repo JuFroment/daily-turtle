@@ -157,13 +157,21 @@ button.text-btn {
   padding: 0.4rem;
 }
 
-button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="1"],
-button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="6"] {
+button:not(.text-btn):not(.journal-filter-btn):not(
+    .quest-sort-btn
+  )[data-btn-variant="1"],
+button:not(.text-btn):not(.journal-filter-btn):not(
+    .quest-sort-btn
+  )[data-btn-variant="6"] {
   position: relative;
 }
 
-button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="1"]::before,
-button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="6"]::before {
+button:not(.text-btn):not(.journal-filter-btn):not(
+    .quest-sort-btn
+  )[data-btn-variant="1"]::before,
+button:not(.text-btn):not(.journal-filter-btn):not(
+    .quest-sort-btn
+  )[data-btn-variant="6"]::before {
   content: "";
   position: absolute;
   inset: -2px;
@@ -173,11 +181,15 @@ button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="6"]::before {
   pointer-events: none;
 }
 
-button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="3"] {
+button:not(.text-btn):not(.journal-filter-btn):not(
+    .quest-sort-btn
+  )[data-btn-variant="3"] {
   border-radius: 0 12px 12px 12px;
 }
 
-button:not(.text-btn):not(.journal-filter-btn)[data-btn-variant="8"] {
+button:not(.text-btn):not(.journal-filter-btn):not(
+    .quest-sort-btn
+  )[data-btn-variant="8"] {
   border-radius: 12px 12px 0 12px;
 }
 
@@ -1552,11 +1564,11 @@ menu {
 }
 
 .sparkle .quest-title::before {
-  left: -3.5em;
+  left: -4.5em;
 }
 
 .sparkle .quest-title::after {
-  right: -4.5em;
+  right: -6em;
   animation-delay: 0.1s;
 }
 
