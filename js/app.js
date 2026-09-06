@@ -340,7 +340,11 @@ function render() {
   );
   if (previousGlobalLevel !== null && info.level > previousGlobalLevel) {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setTimeout(() => {
+    const waitForScrollTop = () => {
+      if (window.scrollY > 0) {
+        requestAnimationFrame(waitForScrollTop);
+        return;
+      }
       const badge = document.querySelector(".level-badge");
       const frog = document.querySelector(".frog-icon");
       badge.classList.add("global-level-up");
@@ -349,7 +353,8 @@ function render() {
         badge.classList.remove("global-level-up");
         frog.classList.remove("frog-hop");
       }, 900);
-    }, 400);
+    };
+    requestAnimationFrame(waitForScrollTop);
   }
   previousGlobalLevel = info.level;
   document.querySelector("#levelValue").textContent = info.level;
@@ -675,7 +680,7 @@ function renderPastJournalCalendar() {
 
     week.forEach((day) => {
       const inMonth = day.getUTCMonth() === month;
-      const dKey = dateKey(day);
+      const dKey = day.toISOString().slice(0, 10);
       const dayData = state.days[dKey];
       const hasQuests = inMonth && Boolean(dayData?.completed?.length);
       const hasNote = inMonth && Boolean(dayData?.initiative);
