@@ -97,6 +97,9 @@ docs: add CONTRIBUTING.md
 | test     | Add or update tests                            | `test: add quest reset tests`        |
 | chore    | Maintenance tasks and tooling                  | `chore: update issue templates`      |
 
+Enforced automatically via a Husky `commit-msg` hook (Commitlint) — a
+commit that doesn't follow this convention is rejected at commit time.
+
 ## Pull Requests
 
 - Link the pull request to an issue.
