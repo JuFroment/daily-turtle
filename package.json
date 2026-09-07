@@ -13,6 +13,7 @@
     "format": "prettier --write ."
   },
   "lint-staged": {
+    "js/**/*.js": "eslint --fix",
     "*.{js,css,html,json,md,yml}": "prettier --write"
   },
   "repository": {
