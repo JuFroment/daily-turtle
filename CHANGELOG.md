@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/JuFroment/daily-turtle/compare/v1.0.0...v1.1.0) (2026-09-11)
+
+### Features
+
+- add a quest detail popup with history and an optional description ([#151](https://github.com/JuFroment/daily-turtle/issues/151)) ([1026436](https://github.com/JuFroment/daily-turtle/commit/10264367309a7a58f3e436a762fd3e2c33444063))
+
 # 1.0.0 (2026-09-10)
 
 ### Bug Fixes
