@@ -738,6 +738,29 @@ h2 {
   margin-top: 0.15rem;
 }
 
+#questDetailDialog .stats-grid {
+  grid-template-columns: repeat(2, minmax(0, 200px));
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 1.6rem;
+}
+
+#questDetailDialog .stats-grid div {
+  padding: 0.7rem 0.6rem;
+}
+#questDetailDescription {
+  color: var(--text-secondary);
+}
+
+#questDetailBonus,
+#questDetailDescription {
+  text-align: center;
+}
+
+#questDetailTitle .quest-xp {
+  vertical-align: middle;
+}
+
 .quest-list {
   display: grid;
   gap: 0.7rem;
@@ -765,6 +788,16 @@ h2 {
 }
 .quest-title {
   font-weight: 600;
+}
+
+.quest-title.clickable {
+  cursor: pointer;
+  width: fit-content;
+  border-bottom: 1px dotted var(--text-muted);
+}
+
+.quest-title.clickable:active {
+  opacity: 0.7;
 }
 .quest-xp {
   color: var(--quest-xp);
@@ -1454,6 +1487,9 @@ dialog::backdrop {
   background: var(--dialog-backdrop);
 }
 dialog form {
+  padding: 1rem;
+}
+#questDetailDialog {
   padding: 1rem;
 }
 .editor-row {

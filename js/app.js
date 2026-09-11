@@ -265,7 +265,7 @@ function renderCategories() {
         label.className = `quest ${isDone ? "done" : ""}`;
         label.innerHTML = `
       <input type="checkbox" ${isDone ? "checked" : ""} aria-label="${escapeHtml(quest.title)}" />
-      <span class="quest-title">${escapeHtml(quest.title)}</span>
+      <span class="quest-title clickable">${escapeHtml(quest.title)}</span>
       <span class="quest-xp">+${quest.xp} XP</span>`;
         label.querySelector("input").addEventListener("change", (event) => {
           const todayData = currentDay();
@@ -284,6 +284,13 @@ function renderCategories() {
           render();
         });
         list.appendChild(label);
+
+        label
+          .querySelector(".quest-title")
+          .addEventListener("click", (event) => {
+            event.preventDefault();
+            openQuestDetail(quest);
+          });
 
         if (quest.bonusLabel && isDone) {
           const bonusLabel = document.createElement("label");
@@ -564,6 +571,55 @@ function getPeriodSummary(period) {
   return { activeDays, xp, reviewsCount };
 }
 
+function getQuestPeriodCount(questId, period) {
+  const cutoff = getPeriodStart(period);
+  let count = 0;
+  Object.entries(state.days).forEach(([key, day]) => {
+    if (new Date(key) < cutoff) return;
+    if ((day.completed || []).includes(questId)) count++;
+  });
+  return count;
+}
+
+function openQuestDetail(quest) {
+  document.querySelector("#questDetailTitle").innerHTML =
+    `${escapeHtml(quest.title)} <span class="quest-xp">+${quest.xp} XP</span>`;
+
+  const bonusEl = document.querySelector("#questDetailBonus");
+  if (quest.bonusLabel) {
+    bonusEl.textContent = `Bonus : ${quest.bonusLabel} (+${quest.bonusXp} XP)`;
+    bonusEl.classList.remove("hidden");
+  } else {
+    bonusEl.classList.add("hidden");
+  }
+
+  document.querySelector("#questDetailWeek").textContent = getQuestPeriodCount(
+    quest.id,
+    "week",
+  );
+  document.querySelector("#questDetailMonth").textContent = getQuestPeriodCount(
+    quest.id,
+    "month",
+  );
+
+  const dividerEl = document.querySelector("#questDetailDivider");
+  const descEl = document.querySelector("#questDetailDescription");
+  if (quest.description) {
+    descEl.textContent = quest.description;
+    descEl.classList.remove("hidden");
+    dividerEl.classList.remove("hidden");
+  } else {
+    descEl.classList.add("hidden");
+    dividerEl.classList.add("hidden");
+  }
+
+  document.querySelector("#questDetailDialog").showModal();
+}
+
+document.querySelector("#closeQuestDetailBtn").addEventListener("click", () => {
+  document.querySelector("#questDetailDialog").close();
+});
+
 function renderJournal() {
   const list = document.querySelector("#journalList");
   list.classList.toggle("hidden", journalCollapsed);
@@ -730,6 +786,7 @@ function addEditorRow(
     id: crypto.randomUUID(),
     title: "",
     xp: 10,
+    description: "",
     bonusLabel: "",
     bonusXp: 0,
   },
@@ -744,6 +801,7 @@ function addEditorRow(
       <input type="number" class="quest-xp-input" min="1" max="100" value="${quest.xp}" aria-label="Points d'expérience" />
       <button type="button" class="danger">Supprimer</button>
     </div>
+    <textarea class="quest-description-input" rows="2" placeholder="Description (optionnel)">${escapeHtml(quest.description || "")}</textarea>
     <div class="editor-row-bonus">
       <input type="text" class="quest-bonus-label-input" value="${escapeHtml(quest.bonusLabel || "")}" placeholder="Bonus (optionnel)" />
       <input type="number" class="quest-bonus-xp-input" min="0" max="100" value="${quest.bonusXp || 0}" aria-label="XP bonus" />
@@ -881,6 +939,9 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", (event) => {
     group.querySelectorAll(".editor-row").forEach((row) => {
       const title = row.querySelector(".quest-title-input").value.trim();
       if (!title) return;
+      const description = row
+        .querySelector(".quest-description-input")
+        .value.trim();
       const bonusLabel = row
         .querySelector(".quest-bonus-label-input")
         .value.trim();
@@ -894,6 +955,7 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", (event) => {
           Number(row.querySelector(".quest-xp-input").value) || 10,
         ),
         categoryId,
+        ...(description ? { description } : {}),
         ...(bonusLabel ? { bonusLabel, bonusXp: Math.max(0, bonusXp) } : {}),
       });
     });

@@ -277,6 +277,29 @@
       </form>
     </dialog>
 
+    <dialog id="questDetailDialog">
+      <div class="row between">
+        <h2 id="questDetailTitle"></h2>
+        <button
+          type="button"
+          id="closeQuestDetailBtn"
+          class="text-btn"
+          aria-label="Fermer"
+        >
+          Fermer
+        </button>
+      </div>
+      <p id="questDetailBonus" class="muted hidden"></p>
+      <div class="stats-grid">
+        <div>
+          <strong id="questDetailWeek">0</strong><span>cette semaine</span>
+        </div>
+        <div><strong id="questDetailMonth">0</strong><span>ce mois</span></div>
+      </div>
+      <hr id="questDetailDivider" class="journal-divider hidden" />
+      <p id="questDetailDescription" class="hidden"></p>
+    </dialog>
+
     <dialog id="pastJournalDialog">
       <div class="row between">
         <h2>Relire une chronique passée</h2>
