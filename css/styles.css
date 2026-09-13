@@ -792,8 +792,7 @@ h2 {
 
 .quest-title.clickable {
   cursor: pointer;
-  width: fit-content;
-  border-bottom: 1px dotted var(--text-muted);
+  text-decoration: underline dotted var(--text-muted);
 }
 
 .quest-title.clickable:active {
