@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/JuFroment/daily-turtle/compare/v1.1.0...v1.1.1) (2026-09-13)
+
+### Bug Fixes
+
+- underline multi-line quest titles per line instead of as one box ([#153](https://github.com/JuFroment/daily-turtle/issues/153)) ([56e87ea](https://github.com/JuFroment/daily-turtle/commit/56e87ea00866c4c2b493344a053f92f84d58aa14))
+
 # [1.1.0](https://github.com/JuFroment/daily-turtle/compare/v1.0.0...v1.1.0) (2026-09-11)
 
 ### Features
