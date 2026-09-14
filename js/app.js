@@ -78,6 +78,16 @@ const defaultState = {
   days: {},
   reviews: {},
   backlog: [],
+  toolbox: [
+    {
+      id: crypto.randomUUID(),
+      name: "La carapace à idées",
+      blocks: [
+        { id: crypto.randomUUID(), type: "checklist", title: "", items: [] },
+      ],
+    },
+  ],
+
   questSort: {},
 };
 
@@ -155,7 +165,31 @@ function normalizeState(saved) {
     reviews: saved.reviews || {},
     backlog: saved.backlog || [],
     questSort: saved.questSort || {},
+    toolbox: migrateBacklogToToolbox(saved),
   };
+}
+
+function migrateBacklogToToolbox(saved) {
+  if (saved.toolbox) return saved.toolbox;
+  const backlog = saved.backlog || [];
+  return [
+    {
+      id: crypto.randomUUID(),
+      name: "La carapace à idées",
+      blocks: [
+        {
+          id: crypto.randomUUID(),
+          type: "checklist",
+          title: "",
+          items: backlog.map((item) => ({
+            id: item.id,
+            text: item.title,
+            done: item.done,
+          })),
+        },
+      ],
+    },
+  ];
 }
 
 function loadState() {
