@@ -118,6 +118,7 @@ let deferredInstallPrompt = null;
 let journalPeriod = "today";
 let journalCollapsed = false;
 let expandedCategoryId = null;
+let activeToolboxPageId = null;
 let calendarMonth = new Date();
 let viewedDayKey = null;
 let viewedWeekKey = null;
@@ -418,7 +419,7 @@ function render() {
   document.querySelector("#initiativeNote").value = day.initiative || "";
   renderWeek();
   loadReview();
-  renderBacklog();
+  renderToolbox();
   renderJournal();
 }
 
@@ -471,41 +472,188 @@ function renderWeek() {
     : "0 %";
 }
 
-function renderBacklog() {
-  const activeList = document.querySelector("#backlogActive");
-  const doneList = document.querySelector("#backlogDone");
-  const doneSection = document.querySelector("#backlogDoneSection");
-  activeList.innerHTML = "";
-  doneList.innerHTML = "";
+function renderToolbox() {
+  if (
+    !activeToolboxPageId ||
+    !state.toolbox.some((p) => p.id === activeToolboxPageId)
+  ) {
+    activeToolboxPageId = state.toolbox[0]?.id || null;
+  }
+
+  const tabsEl = document.querySelector("#toolboxTabs");
+  tabsEl.innerHTML = "";
+
+  state.toolbox.forEach((page) => {
+    const isActive = page.id === activeToolboxPageId;
+    if (isActive) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "toolbox-tab-input";
+      input.value = page.name;
+      input.addEventListener("change", () => {
+        const name = input.value.trim();
+        if (!name) {
+          input.value = page.name;
+          return;
+        }
+        page.name = name;
+        saveState();
+      });
+      tabsEl.appendChild(input);
+
+      if (state.toolbox.length > 1) {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "text-btn";
+        deleteBtn.textContent = "✕";
+        deleteBtn.setAttribute("aria-label", "Supprimer la page");
+        deleteBtn.addEventListener("click", () => {
+          state.toolbox = state.toolbox.filter((p) => p.id !== page.id);
+          activeToolboxPageId = null;
+          saveState();
+          renderToolbox();
+        });
+        tabsEl.appendChild(deleteBtn);
+      }
+    } else {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "journal-filter-btn";
+      tab.textContent = page.name;
+      tab.addEventListener("click", () => {
+        activeToolboxPageId = page.id;
+        renderToolbox();
+      });
+      tabsEl.appendChild(tab);
+    }
+  });
+
+  const addPageBtn = document.createElement("button");
+  addPageBtn.type = "button";
+  addPageBtn.className = "text-btn";
+  addPageBtn.textContent = "+ Nouvelle page";
+  addPageBtn.addEventListener("click", () => {
+    const page = { id: crypto.randomUUID(), name: "Nouvelle page", blocks: [] };
+    state.toolbox.push(page);
+    activeToolboxPageId = page.id;
+    saveState();
+    renderToolbox();
+  });
+  tabsEl.appendChild(addPageBtn);
+
+  const pageEl = document.querySelector("#toolboxPage");
+  pageEl.innerHTML = "";
+  const activePage = state.toolbox.find((p) => p.id === activeToolboxPageId);
+  if (activePage) {
+    activePage.blocks.forEach((block) => {
+      pageEl.appendChild(renderToolboxBlock(block, activePage));
+    });
+  }
+}
+
+function renderToolboxBlock(block, page) {
+  const wrap = document.createElement("div");
+  wrap.className = "toolbox-block";
+  wrap.dataset.id = block.id;
+
+  const header = document.createElement("div");
+  header.className = "row between";
+  const titleEl = document.createElement("span");
+  titleEl.className = "toolbox-block-title";
+  titleEl.textContent = block.title || "";
+  header.appendChild(titleEl);
+  const deleteBtn = document.createElement("button");
+  deleteBtn.type = "button";
+  deleteBtn.className = "text-btn";
+  deleteBtn.textContent = "✕";
+  deleteBtn.setAttribute("aria-label", "Supprimer le bloc");
+  deleteBtn.addEventListener("click", () => {
+    page.blocks = page.blocks.filter((b) => b.id !== block.id);
+    saveState();
+    renderToolbox();
+  });
+  header.appendChild(deleteBtn);
+  wrap.appendChild(header);
+
+  if (block.type === "checklist") {
+    wrap.appendChild(renderChecklistBlockBody(block));
+  }
+
+  return wrap;
+}
+
+function renderChecklistBlockBody(block) {
+  const wrap = document.createElement("div");
+
+  const form = document.createElement("form");
+  form.className = "backlog-form";
+  form.innerHTML = `<input type="text" placeholder="Ajouter un item…" /><button type="submit">Ajouter</button>`;
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = form.querySelector("input");
+    const text = input.value.trim();
+    if (!text) return;
+    block.items.push({ id: crypto.randomUUID(), text, done: false });
+    saveState();
+    renderToolbox();
+  });
+  wrap.appendChild(form);
+
+  const activeList = document.createElement("div");
+  activeList.className = "backlog-list";
+  const doneSection = document.createElement("div");
+  doneSection.className = "backlog-done-section";
+  doneSection.innerHTML = `<p class="backlog-done-label">Archivé dans la carapace !</p>`;
+  const doneList = document.createElement("div");
+  doneList.className = "backlog-list";
+  doneSection.appendChild(doneList);
 
   const renderItem = (item, container) => {
     const row = document.createElement("div");
     row.className = `backlog-item ${item.done ? "done" : ""}`;
     row.innerHTML = `
       <label>
-        <input type="checkbox" ${item.done ? "checked" : ""} aria-label="${escapeHtml(item.title)}" />
-        <span>${escapeHtml(item.title)}</span>
+        <input type="checkbox" ${item.done ? "checked" : ""} aria-label="${escapeHtml(item.text)}" />
+        <span>${escapeHtml(item.text)}</span>
       </label>
       <button type="button" class="text-btn" aria-label="Supprimer">✕</button>`;
     row.querySelector("input").addEventListener("change", (event) => {
       item.done = event.target.checked;
       saveState();
-      renderBacklog();
+      renderToolbox();
     });
     row.querySelector("button").addEventListener("click", () => {
-      state.backlog = state.backlog.filter((entry) => entry.id !== item.id);
+      block.items = block.items.filter((i) => i.id !== item.id);
       saveState();
-      renderBacklog();
+      renderToolbox();
     });
     container.appendChild(row);
   };
 
-  state.backlog.forEach((item) =>
+  block.items.forEach((item) =>
     renderItem(item, item.done ? doneList : activeList),
   );
 
+  wrap.appendChild(activeList);
   doneSection.classList.toggle("hidden", doneList.children.length === 0);
+  wrap.appendChild(doneSection);
+
+  return wrap;
 }
+
+document.querySelector("#addBlockBtn").addEventListener("click", () => {
+  const type = document.querySelector("#addBlockType").value;
+  const activePage = state.toolbox.find((p) => p.id === activeToolboxPageId);
+  if (!activePage) return;
+  activePage.blocks.push({
+    id: crypto.randomUUID(),
+    type,
+    title: "",
+    items: [],
+  });
+  saveState();
+  renderToolbox();
+});
 
 function reviewKey(date = new Date()) {
   const d = new Date(
@@ -893,17 +1041,6 @@ document.querySelector("#saveNoteBtn").addEventListener("click", () => {
   const feedback = document.querySelector("#noteSaved");
   feedback.classList.remove("hidden");
   setTimeout(() => feedback.classList.add("hidden"), 1600);
-});
-
-document.querySelector("#backlogForm").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const input = document.querySelector("#backlogInput");
-  const title = input.value.trim();
-  if (!title) return;
-  state.backlog.push({ id: crypto.randomUUID(), title, done: false });
-  input.value = "";
-  saveState();
-  renderBacklog();
 });
 
 document.querySelector("#saveReviewBtn").addEventListener("click", () => {
