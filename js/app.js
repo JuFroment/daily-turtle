@@ -78,6 +78,15 @@ const defaultState = {
   days: {},
   reviews: {},
   backlog: [],
+  toolbox: [
+    {
+      id: crypto.randomUUID(),
+      name: "La carapace à idées",
+      type: "checklist",
+      items: [],
+    },
+  ],
+
   questSort: {},
 };
 
@@ -108,6 +117,9 @@ let deferredInstallPrompt = null;
 let journalPeriod = "today";
 let journalCollapsed = false;
 let expandedCategoryId = null;
+let activeToolboxPageId = null;
+let toolboxActiveCell = null;
+let renamingPageId = null;
 let calendarMonth = new Date();
 let viewedDayKey = null;
 let viewedWeekKey = null;
@@ -155,7 +167,41 @@ function normalizeState(saved) {
     reviews: saved.reviews || {},
     backlog: saved.backlog || [],
     questSort: saved.questSort || {},
+    toolbox: migrateTableCells(migrateBacklogToToolbox(saved)),
   };
+}
+
+function migrateBacklogToToolbox(saved) {
+  if (saved.toolbox) return saved.toolbox;
+  const backlog = saved.backlog || [];
+  return [
+    {
+      id: crypto.randomUUID(),
+      name: "La carapace à idées",
+      type: "checklist",
+      items: backlog.map((item) => ({
+        id: item.id,
+        text: item.title,
+        done: item.done,
+      })),
+    },
+  ];
+}
+
+function migrateTableCells(toolbox) {
+  toolbox.forEach((page) => {
+    if (page.type !== "table") return;
+    page.rows = page.rows.map((row) =>
+      row.map((cell) => {
+        const base =
+          typeof cell === "string"
+            ? { text: cell, bold: false, italic: false, color: "" }
+            : cell;
+        return { textColor: "", ...base };
+      }),
+    );
+  });
+  return toolbox;
 }
 
 function loadState() {
@@ -384,7 +430,7 @@ function render() {
   document.querySelector("#initiativeNote").value = day.initiative || "";
   renderWeek();
   loadReview();
-  renderBacklog();
+  renderToolbox();
   renderJournal();
 }
 
@@ -437,40 +483,427 @@ function renderWeek() {
     : "0 %";
 }
 
-function renderBacklog() {
-  const activeList = document.querySelector("#backlogActive");
-  const doneList = document.querySelector("#backlogDone");
-  const doneSection = document.querySelector("#backlogDoneSection");
-  activeList.innerHTML = "";
-  doneList.innerHTML = "";
+function renderToolbox() {
+  if (
+    !activeToolboxPageId ||
+    !state.toolbox.some((p) => p.id === activeToolboxPageId)
+  ) {
+    activeToolboxPageId = state.toolbox[0]?.id || null;
+  }
+
+  const tabsEl = document.querySelector("#toolboxTabs");
+  tabsEl.innerHTML = "";
+
+  state.toolbox.forEach((page) => {
+    const isActive = page.id === activeToolboxPageId;
+
+    if (isActive && renamingPageId === page.id) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "toolbox-tab-input";
+      input.value = page.name;
+      const commit = () => {
+        const name = input.value.trim();
+        if (name) page.name = name;
+        renamingPageId = null;
+        saveState();
+        renderToolbox();
+      };
+      input.addEventListener("blur", commit);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") input.blur();
+      });
+      tabsEl.appendChild(input);
+      requestAnimationFrame(() => input.focus());
+      return;
+    }
+
+    if (isActive && state.toolbox.length > 1) {
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "text-btn";
+      deleteBtn.textContent = "✕";
+      deleteBtn.setAttribute("aria-label", "Supprimer la page");
+      deleteBtn.addEventListener("click", () => {
+        state.toolbox = state.toolbox.filter((p) => p.id !== page.id);
+        activeToolboxPageId = null;
+        saveState();
+        renderToolbox();
+      });
+      tabsEl.appendChild(deleteBtn);
+    }
+
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = `journal-filter-btn ${isActive ? "active" : ""}`;
+    tab.textContent = page.name;
+    tab.addEventListener("click", () => {
+      activeToolboxPageId = page.id;
+      renderToolbox();
+    });
+    tabsEl.appendChild(tab);
+
+    if (isActive) {
+      const renameBtn = document.createElement("button");
+      renameBtn.type = "button";
+      renameBtn.className = "text-btn";
+      renameBtn.textContent = "✎";
+      renameBtn.setAttribute("aria-label", "Renommer la page");
+      renameBtn.addEventListener("click", () => {
+        renamingPageId = page.id;
+        renderToolbox();
+      });
+      tabsEl.appendChild(renameBtn);
+    }
+  });
+
+  const addPageTabBtn = document.createElement("button");
+  addPageTabBtn.type = "button";
+  addPageTabBtn.className = "text-btn";
+  addPageTabBtn.classList.add("toolbox-add-page-btn");
+  addPageTabBtn.textContent = "+";
+  addPageTabBtn.setAttribute("aria-label", "Nouvelle page");
+  addPageTabBtn.addEventListener("click", () => {
+    document.querySelector("#newPageNameInput").value = "";
+    document.querySelector("#newPageTypeInput").value = "checklist";
+    document.querySelector("#newPageDialog").showModal();
+  });
+  tabsEl.appendChild(addPageTabBtn);
+
+  const pageEl = document.querySelector("#toolboxPage");
+  pageEl.innerHTML = "";
+  const activePage = state.toolbox.find((p) => p.id === activeToolboxPageId);
+  if (activePage) {
+    if (activePage.type === "checklist") {
+      pageEl.appendChild(renderChecklistBlockBody(activePage));
+    }
+    if (activePage.type === "text") {
+      pageEl.appendChild(renderTextBlockBody(activePage));
+    }
+    if (activePage.type === "list") {
+      pageEl.appendChild(renderListBlockBody(activePage));
+    }
+    if (activePage.type === "table") {
+      pageEl.appendChild(renderTableBlockBody(activePage));
+    }
+  }
+}
+
+function renderChecklistBlockBody(block) {
+  const wrap = document.createElement("div");
+
+  const form = document.createElement("form");
+  form.className = "backlog-form";
+  form.innerHTML = `<input type="text" placeholder="Ajouter un item…" /><button type="submit">Ajouter</button>`;
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = form.querySelector("input");
+    const text = input.value.trim();
+    if (!text) return;
+    block.items.push({ id: crypto.randomUUID(), text, done: false });
+    saveState();
+    renderToolbox();
+  });
+  wrap.appendChild(form);
+
+  const activeList = document.createElement("div");
+  activeList.className = "backlog-list";
+  const doneSection = document.createElement("div");
+  doneSection.className = "backlog-done-section";
+  doneSection.innerHTML = `<p class="backlog-done-label">Archivé dans la carapace !</p>`;
+  const doneList = document.createElement("div");
+  doneList.className = "backlog-list";
+  doneSection.appendChild(doneList);
 
   const renderItem = (item, container) => {
     const row = document.createElement("div");
     row.className = `backlog-item ${item.done ? "done" : ""}`;
     row.innerHTML = `
       <label>
-        <input type="checkbox" ${item.done ? "checked" : ""} aria-label="${escapeHtml(item.title)}" />
-        <span>${escapeHtml(item.title)}</span>
+        <input type="checkbox" ${item.done ? "checked" : ""} aria-label="${escapeHtml(item.text)}" />
+        <span>${escapeHtml(item.text)}</span>
       </label>
       <button type="button" class="text-btn" aria-label="Supprimer">✕</button>`;
     row.querySelector("input").addEventListener("change", (event) => {
       item.done = event.target.checked;
       saveState();
-      renderBacklog();
+      renderToolbox();
     });
     row.querySelector("button").addEventListener("click", () => {
-      state.backlog = state.backlog.filter((entry) => entry.id !== item.id);
+      block.items = block.items.filter((i) => i.id !== item.id);
       saveState();
-      renderBacklog();
+      renderToolbox();
     });
     container.appendChild(row);
   };
 
-  state.backlog.forEach((item) =>
+  block.items.forEach((item) =>
     renderItem(item, item.done ? doneList : activeList),
   );
 
+  wrap.appendChild(activeList);
   doneSection.classList.toggle("hidden", doneList.children.length === 0);
+  wrap.appendChild(doneSection);
+
+  return wrap;
+}
+
+function renderTextBlockBody(block) {
+  const textarea = document.createElement("textarea");
+  textarea.rows = 3;
+  textarea.placeholder = "Écris ce que tu veux…";
+  textarea.value = block.content || "";
+  textarea.addEventListener("change", () => {
+    block.content = textarea.value;
+    saveState();
+  });
+  return textarea;
+}
+
+function renderListBlockBody(page) {
+  const wrap = document.createElement("div");
+
+  const form = document.createElement("form");
+  form.className = "backlog-form";
+  form.innerHTML = `<input type="text" placeholder="Ajouter une ligne…" /><button type="submit">Ajouter</button>`;
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = form.querySelector("input");
+    const text = input.value.trim();
+    if (!text) return;
+    page.items.push(text);
+    saveState();
+    renderToolbox();
+  });
+  wrap.appendChild(form);
+
+  const list = document.createElement("ul");
+  list.className = "toolbox-list";
+  page.items.forEach((text, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${escapeHtml(text)}</span><button type="button" class="text-btn" aria-label="Supprimer">✕</button>`;
+    li.querySelector("button").addEventListener("click", () => {
+      page.items.splice(index, 1);
+      saveState();
+      renderToolbox();
+    });
+    list.appendChild(li);
+  });
+  wrap.appendChild(list);
+
+  return wrap;
+}
+
+function renderTableBlockBody(page) {
+  const wrap = document.createElement("div");
+  wrap.className = "toolbox-table-wrap";
+
+  if (toolboxActiveCell && !page.rows.flat().includes(toolboxActiveCell)) {
+    toolboxActiveCell = null;
+  }
+
+  const toolbar = document.createElement("div");
+  toolbar.className = "row toolbox-table-toolbar";
+
+  const boldBtn = document.createElement("button");
+  boldBtn.type = "button";
+  boldBtn.className = `toolbox-cell-btn ${toolboxActiveCell?.bold ? "active" : ""}`;
+  boldBtn.textContent = "G";
+  boldBtn.setAttribute("aria-label", "Gras");
+  boldBtn.disabled = !toolboxActiveCell;
+  boldBtn.addEventListener("click", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.bold = !toolboxActiveCell.bold;
+    saveState();
+    renderToolbox();
+  });
+  toolbar.appendChild(boldBtn);
+
+  const italicBtn = document.createElement("button");
+  italicBtn.type = "button";
+  italicBtn.className = `toolbox-cell-btn ${toolboxActiveCell?.italic ? "active" : ""}`;
+  italicBtn.textContent = "I";
+  italicBtn.setAttribute("aria-label", "Italique");
+  italicBtn.disabled = !toolboxActiveCell;
+  italicBtn.addEventListener("click", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.italic = !toolboxActiveCell.italic;
+    saveState();
+    renderToolbox();
+  });
+  toolbar.appendChild(italicBtn);
+
+  const colorInput = document.createElement("input");
+  colorInput.type = "color";
+  colorInput.className = "toolbox-cell-color";
+  colorInput.value = toolboxActiveCell?.color || "#f5ebd3";
+  colorInput.disabled = !toolboxActiveCell;
+  colorInput.addEventListener("change", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.color = colorInput.value;
+    saveState();
+    renderToolbox();
+  });
+  const bgColorLabel = document.createElement("span");
+  bgColorLabel.textContent = "Fond";
+  bgColorLabel.className = "toolbox-cell-color-label";
+  toolbar.appendChild(bgColorLabel);
+  toolbar.appendChild(colorInput);
+
+  const textColorInput = document.createElement("input");
+  textColorInput.type = "color";
+  textColorInput.className = "toolbox-cell-color";
+  textColorInput.value = toolboxActiveCell?.textColor || "#2e2013";
+  textColorInput.disabled = !toolboxActiveCell;
+  textColorInput.title = "Couleur du texte";
+  textColorInput.addEventListener("change", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.textColor = textColorInput.value;
+    saveState();
+    renderToolbox();
+  });
+  const textColorLabel = document.createElement("span");
+  textColorLabel.textContent = "Texte";
+  textColorLabel.className = "toolbox-cell-color-label";
+  toolbar.appendChild(textColorLabel);
+  toolbar.appendChild(textColorInput);
+
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "text-btn";
+  resetBtn.textContent = "Réinitialiser";
+  resetBtn.disabled = !toolboxActiveCell;
+  resetBtn.addEventListener("click", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.bold = false;
+    toolboxActiveCell.italic = false;
+    toolboxActiveCell.color = "";
+    toolboxActiveCell.textColor = "";
+    saveState();
+    renderToolbox();
+  });
+  toolbar.appendChild(resetBtn);
+
+  wrap.appendChild(toolbar);
+
+  const table = document.createElement("table");
+  table.className = "toolbox-table";
+
+  page.rows.forEach((row, rowIndex) => {
+    const tr = document.createElement("tr");
+    row.forEach((cell) => {
+      const td = document.createElement("td");
+      td.style.backgroundColor = cell.color || "";
+      if (cell === toolboxActiveCell) td.classList.add("active-cell");
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = cell.text;
+      input.style.fontWeight = cell.bold ? "700" : "400";
+      input.style.fontStyle = cell.italic ? "italic" : "normal";
+      input.style.color = cell.textColor || "";
+      input.addEventListener("focus", () => {
+        toolboxActiveCell = cell;
+        document
+          .querySelectorAll(".toolbox-table td.active-cell")
+          .forEach((el) => el.classList.remove("active-cell"));
+        td.classList.add("active-cell");
+        boldBtn.disabled = false;
+        italicBtn.disabled = false;
+        colorInput.disabled = false;
+        textColorInput.disabled = false;
+        resetBtn.disabled = false;
+        boldBtn.classList.toggle("active", !!cell.bold);
+        italicBtn.classList.toggle("active", !!cell.italic);
+        colorInput.value = cell.color || "#f5ebd3";
+        textColorInput.value = cell.textColor || "#2e2013";
+      });
+      input.addEventListener("change", () => {
+        cell.text = input.value;
+        saveState();
+      });
+      td.appendChild(input);
+
+      tr.appendChild(td);
+    });
+    const rowActionTd = document.createElement("td");
+    if (page.rows.length > 1) {
+      const deleteRowBtn = document.createElement("button");
+      deleteRowBtn.type = "button";
+      deleteRowBtn.className = "text-btn";
+      deleteRowBtn.textContent = "✕";
+      deleteRowBtn.setAttribute("aria-label", "Supprimer la ligne");
+      deleteRowBtn.addEventListener("click", () => {
+        page.rows.splice(rowIndex, 1);
+        saveState();
+        renderToolbox();
+      });
+      rowActionTd.appendChild(deleteRowBtn);
+    }
+    tr.appendChild(rowActionTd);
+    table.appendChild(tr);
+  });
+
+  wrap.appendChild(table);
+
+  const actions = document.createElement("div");
+  actions.className = "row toolbox-table-actions";
+
+  const addRowBtn = document.createElement("button");
+  addRowBtn.type = "button";
+  addRowBtn.className = "secondary";
+  addRowBtn.textContent = "+ Ligne";
+  addRowBtn.addEventListener("click", () => {
+    const columnCount = page.rows[0]?.length || 1;
+    page.rows.push(
+      Array.from({ length: columnCount }, () => ({
+        text: "",
+        bold: false,
+        italic: false,
+        color: "",
+        textColor: "",
+      })),
+    );
+    saveState();
+    renderToolbox();
+  });
+  actions.appendChild(addRowBtn);
+
+  const addColBtn = document.createElement("button");
+  addColBtn.type = "button";
+  addColBtn.className = "secondary";
+  addColBtn.textContent = "+ Colonne";
+  addColBtn.addEventListener("click", () => {
+    page.rows.forEach((row) =>
+      row.push({
+        text: "",
+        bold: false,
+        italic: false,
+        color: "",
+        textColor: "",
+      }),
+    );
+    saveState();
+    renderToolbox();
+  });
+  actions.appendChild(addColBtn);
+
+  if (page.rows[0]?.length > 1) {
+    const removeColBtn = document.createElement("button");
+    removeColBtn.type = "button";
+    removeColBtn.className = "text-btn";
+    removeColBtn.textContent = "− Colonne";
+    removeColBtn.addEventListener("click", () => {
+      page.rows.forEach((row) => row.pop());
+      saveState();
+      renderToolbox();
+    });
+    actions.appendChild(removeColBtn);
+  }
+
+  wrap.appendChild(actions);
+
+  return wrap;
 }
 
 function reviewKey(date = new Date()) {
@@ -861,17 +1294,6 @@ document.querySelector("#saveNoteBtn").addEventListener("click", () => {
   setTimeout(() => feedback.classList.add("hidden"), 1600);
 });
 
-document.querySelector("#backlogForm").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const input = document.querySelector("#backlogInput");
-  const title = input.value.trim();
-  if (!title) return;
-  state.backlog.push({ id: crypto.randomUUID(), title, done: false });
-  input.value = "";
-  saveState();
-  renderBacklog();
-});
-
 document.querySelector("#saveReviewBtn").addEventListener("click", () => {
   state.reviews[reviewKey()] = {
     proud: document.querySelector("#proudInput").value.trim(),
@@ -976,6 +1398,31 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", (event) => {
   saveState();
   document.querySelector("#questDialog").close();
   render();
+});
+
+document.querySelector("#createNewPageBtn").addEventListener("click", () => {
+  const name = document.querySelector("#newPageNameInput").value.trim();
+  if (!name) return;
+  const type = document.querySelector("#newPageTypeInput").value;
+  const page = { id: crypto.randomUUID(), name, type };
+  if (type === "checklist") page.items = [];
+  if (type === "text") page.content = "";
+  if (type === "list") page.items = [];
+  if (type === "table")
+    page.rows = [
+      [
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+      ],
+      [
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+      ],
+    ];
+  state.toolbox.push(page);
+  activeToolboxPageId = page.id;
+  saveState();
+  renderToolbox();
 });
 
 document.querySelector("#exportBtn").addEventListener("click", () => {

@@ -102,29 +102,60 @@
         <div id="categoryList" class="category-list"></div>
       </section>
 
-      <section class="card" aria-labelledby="backlogTitle">
+      <section class="card" aria-labelledby="toolboxTitle">
         <p class="eyebrow">Sans pression</p>
         <div class="title-row">
           <img src="assets/turtle-128.png" alt="" class="turtle-icon" />
-          <h2 id="backlogTitle">La carapace à idées</h2>
+          <h2 id="toolboxTitle">La carapace à idées</h2>
         </div>
-        <p class="muted encouragement">
+        <p class="muted">
           Note ce qui te passe par la tête, sans obligation de le faire
           aujourd'hui.
         </p>
-        <form id="backlogForm" class="backlog-form">
-          <input
-            type="text"
-            id="backlogInput"
-            placeholder="Ex. Trier les vieux vêtements, essayer une nouvelle recette…"
-          />
-          <button type="submit">Ajouter</button>
-        </form>
-        <div id="backlogActive" class="backlog-list"></div>
-        <div id="backlogDoneSection" class="backlog-done-section hidden">
-          <p class="backlog-done-label">Archivé dans la carapace !</p>
-          <div id="backlogDone" class="backlog-list"></div>
-        </div>
+
+        <div id="toolboxTabs" class="toolbox-tabs"></div>
+
+        <div id="toolboxPage"></div>
+
+        <dialog id="newPageDialog">
+          <form method="dialog">
+            <div class="row between">
+              <h2>Ajouter un outil dans la carapace</h2>
+              <button
+                value="cancel"
+                formnovalidate
+                class="text-btn"
+                aria-label="Fermer"
+              >
+                Fermer
+              </button>
+            </div>
+            <div class="row">
+              <label for="newPageNameInput">Nom de l'outil</label>
+              <input
+                type="text"
+                id="newPageNameInput"
+                placeholder="Ex. Courses, Idées cadeaux…"
+                required
+              />
+            </div>
+            <div class="row">
+              <label for="newPageTypeInput">Type</label>
+              <select id="newPageTypeInput" class="toolbox-type-select">
+                <option value="checklist">Checklist</option>
+                <option value="text">Texte</option>
+                <option value="list">Liste</option>
+                <option value="table">Tableau</option>
+              </select>
+            </div>
+            <menu>
+              <button value="cancel" formnovalidate class="secondary">
+                Annuler
+              </button>
+              <button id="createNewPageBtn" value="default">Créer</button>
+            </menu>
+          </form>
+        </dialog>
       </section>
 
       <section class="card" aria-labelledby="weekTitle">
