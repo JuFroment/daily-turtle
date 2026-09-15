@@ -82,9 +82,8 @@ const defaultState = {
     {
       id: crypto.randomUUID(),
       name: "La carapace à idées",
-      blocks: [
-        { id: crypto.randomUUID(), type: "checklist", title: "", items: [] },
-      ],
+      type: "checklist",
+      items: [],
     },
   ],
 
@@ -119,6 +118,7 @@ let journalPeriod = "today";
 let journalCollapsed = false;
 let expandedCategoryId = null;
 let activeToolboxPageId = null;
+let renamingPageId = null;
 let calendarMonth = new Date();
 let viewedDayKey = null;
 let viewedWeekKey = null;
@@ -177,18 +177,12 @@ function migrateBacklogToToolbox(saved) {
     {
       id: crypto.randomUUID(),
       name: "La carapace à idées",
-      blocks: [
-        {
-          id: crypto.randomUUID(),
-          type: "checklist",
-          title: "",
-          items: backlog.map((item) => ({
-            id: item.id,
-            text: item.title,
-            done: item.done,
-          })),
-        },
-      ],
+      type: "checklist",
+      items: backlog.map((item) => ({
+        id: item.id,
+        text: item.title,
+        done: item.done,
+      })),
     },
   ];
 }
@@ -485,101 +479,78 @@ function renderToolbox() {
 
   state.toolbox.forEach((page) => {
     const isActive = page.id === activeToolboxPageId;
-    if (isActive) {
+
+    if (isActive && renamingPageId === page.id) {
       const input = document.createElement("input");
       input.type = "text";
       input.className = "toolbox-tab-input";
       input.value = page.name;
-      input.addEventListener("change", () => {
+      const commit = () => {
         const name = input.value.trim();
-        if (!name) {
-          input.value = page.name;
-          return;
-        }
-        page.name = name;
+        if (name) page.name = name;
+        renamingPageId = null;
         saveState();
+        renderToolbox();
+      };
+      input.addEventListener("blur", commit);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") input.blur();
       });
       tabsEl.appendChild(input);
+      requestAnimationFrame(() => input.focus());
+      return;
+    }
 
-      if (state.toolbox.length > 1) {
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "text-btn";
-        deleteBtn.textContent = "✕";
-        deleteBtn.setAttribute("aria-label", "Supprimer la page");
-        deleteBtn.addEventListener("click", () => {
-          state.toolbox = state.toolbox.filter((p) => p.id !== page.id);
-          activeToolboxPageId = null;
-          saveState();
-          renderToolbox();
-        });
-        tabsEl.appendChild(deleteBtn);
-      }
-    } else {
-      const tab = document.createElement("button");
-      tab.type = "button";
-      tab.className = "journal-filter-btn";
-      tab.textContent = page.name;
-      tab.addEventListener("click", () => {
-        activeToolboxPageId = page.id;
+    if (isActive && state.toolbox.length > 1) {
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "text-btn";
+      deleteBtn.textContent = "✕";
+      deleteBtn.setAttribute("aria-label", "Supprimer la page");
+      deleteBtn.addEventListener("click", () => {
+        state.toolbox = state.toolbox.filter((p) => p.id !== page.id);
+        activeToolboxPageId = null;
+        saveState();
         renderToolbox();
       });
-      tabsEl.appendChild(tab);
+      tabsEl.appendChild(deleteBtn);
+    }
+
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = `journal-filter-btn ${isActive ? "active" : ""}`;
+    tab.textContent = page.name;
+    tab.addEventListener("click", () => {
+      activeToolboxPageId = page.id;
+      renderToolbox();
+    });
+    tabsEl.appendChild(tab);
+
+    if (isActive) {
+      const renameBtn = document.createElement("button");
+      renameBtn.type = "button";
+      renameBtn.className = "text-btn";
+      renameBtn.textContent = "✎";
+      renameBtn.setAttribute("aria-label", "Renommer la page");
+      renameBtn.addEventListener("click", () => {
+        renamingPageId = page.id;
+        renderToolbox();
+      });
+      tabsEl.appendChild(renameBtn);
     }
   });
-
-  const addPageBtn = document.createElement("button");
-  addPageBtn.type = "button";
-  addPageBtn.className = "text-btn";
-  addPageBtn.textContent = "+ Nouvelle page";
-  addPageBtn.addEventListener("click", () => {
-    const page = { id: crypto.randomUUID(), name: "Nouvelle page", blocks: [] };
-    state.toolbox.push(page);
-    activeToolboxPageId = page.id;
-    saveState();
-    renderToolbox();
-  });
-  tabsEl.appendChild(addPageBtn);
 
   const pageEl = document.querySelector("#toolboxPage");
   pageEl.innerHTML = "";
   const activePage = state.toolbox.find((p) => p.id === activeToolboxPageId);
   if (activePage) {
-    activePage.blocks.forEach((block) => {
-      pageEl.appendChild(renderToolboxBlock(block, activePage));
-    });
+    if (activePage.type === "checklist") {
+      pageEl.appendChild(renderChecklistBlockBody(activePage));
+    }
+    if (activePage.type === "text") {
+      pageEl.appendChild(renderTextBlockBody(activePage));
+    }
   }
-}
-
-function renderToolboxBlock(block, page) {
-  const wrap = document.createElement("div");
-  wrap.className = "toolbox-block";
-  wrap.dataset.id = block.id;
-
-  const header = document.createElement("div");
-  header.className = "row between";
-  const titleEl = document.createElement("span");
-  titleEl.className = "toolbox-block-title";
-  titleEl.textContent = block.title || "";
-  header.appendChild(titleEl);
-  const deleteBtn = document.createElement("button");
-  deleteBtn.type = "button";
-  deleteBtn.className = "text-btn";
-  deleteBtn.textContent = "✕";
-  deleteBtn.setAttribute("aria-label", "Supprimer le bloc");
-  deleteBtn.addEventListener("click", () => {
-    page.blocks = page.blocks.filter((b) => b.id !== block.id);
-    saveState();
-    renderToolbox();
-  });
-  header.appendChild(deleteBtn);
-  wrap.appendChild(header);
-
-  if (block.type === "checklist") {
-    wrap.appendChild(renderChecklistBlockBody(block));
-  }
-
-  return wrap;
 }
 
 function renderChecklistBlockBody(block) {
@@ -641,16 +612,25 @@ function renderChecklistBlockBody(block) {
   return wrap;
 }
 
-document.querySelector("#addBlockBtn").addEventListener("click", () => {
-  const type = document.querySelector("#addBlockType").value;
-  const activePage = state.toolbox.find((p) => p.id === activeToolboxPageId);
-  if (!activePage) return;
-  activePage.blocks.push({
-    id: crypto.randomUUID(),
-    type,
-    title: "",
-    items: [],
+function renderTextBlockBody(block) {
+  const textarea = document.createElement("textarea");
+  textarea.rows = 3;
+  textarea.placeholder = "Écris ce que tu veux…";
+  textarea.value = block.content || "";
+  textarea.addEventListener("change", () => {
+    block.content = textarea.value;
+    saveState();
   });
+  return textarea;
+}
+
+document.querySelector("#addPageBtn").addEventListener("click", () => {
+  const type = document.querySelector("#newPageType").value;
+  const page = { id: crypto.randomUUID(), name: "Nouvelle page", type };
+  if (type === "checklist") page.items = [];
+  if (type === "text") page.content = "";
+  state.toolbox.push(page);
+  activeToolboxPageId = page.id;
   saveState();
   renderToolbox();
 });
