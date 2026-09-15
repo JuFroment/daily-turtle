@@ -118,6 +118,7 @@ let journalPeriod = "today";
 let journalCollapsed = false;
 let expandedCategoryId = null;
 let activeToolboxPageId = null;
+let toolboxActiveCell = null;
 let renamingPageId = null;
 let calendarMonth = new Date();
 let viewedDayKey = null;
@@ -166,7 +167,7 @@ function normalizeState(saved) {
     reviews: saved.reviews || {},
     backlog: saved.backlog || [],
     questSort: saved.questSort || {},
-    toolbox: migrateBacklogToToolbox(saved),
+    toolbox: migrateTableCells(migrateBacklogToToolbox(saved)),
   };
 }
 
@@ -185,6 +186,22 @@ function migrateBacklogToToolbox(saved) {
       })),
     },
   ];
+}
+
+function migrateTableCells(toolbox) {
+  toolbox.forEach((page) => {
+    if (page.type !== "table") return;
+    page.rows = page.rows.map((row) =>
+      row.map((cell) => {
+        const base =
+          typeof cell === "string"
+            ? { text: cell, bold: false, italic: false, color: "" }
+            : cell;
+        return { textColor: "", ...base };
+      }),
+    );
+  });
+  return toolbox;
 }
 
 function loadState() {
@@ -681,21 +698,132 @@ function renderTableBlockBody(page) {
   const wrap = document.createElement("div");
   wrap.className = "toolbox-table-wrap";
 
+  if (toolboxActiveCell && !page.rows.flat().includes(toolboxActiveCell)) {
+    toolboxActiveCell = null;
+  }
+
+  const toolbar = document.createElement("div");
+  toolbar.className = "row toolbox-table-toolbar";
+
+  const boldBtn = document.createElement("button");
+  boldBtn.type = "button";
+  boldBtn.className = `toolbox-cell-btn ${toolboxActiveCell?.bold ? "active" : ""}`;
+  boldBtn.textContent = "G";
+  boldBtn.setAttribute("aria-label", "Gras");
+  boldBtn.disabled = !toolboxActiveCell;
+  boldBtn.addEventListener("click", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.bold = !toolboxActiveCell.bold;
+    saveState();
+    renderToolbox();
+  });
+  toolbar.appendChild(boldBtn);
+
+  const italicBtn = document.createElement("button");
+  italicBtn.type = "button";
+  italicBtn.className = `toolbox-cell-btn ${toolboxActiveCell?.italic ? "active" : ""}`;
+  italicBtn.textContent = "I";
+  italicBtn.setAttribute("aria-label", "Italique");
+  italicBtn.disabled = !toolboxActiveCell;
+  italicBtn.addEventListener("click", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.italic = !toolboxActiveCell.italic;
+    saveState();
+    renderToolbox();
+  });
+  toolbar.appendChild(italicBtn);
+
+  const colorInput = document.createElement("input");
+  colorInput.type = "color";
+  colorInput.className = "toolbox-cell-color";
+  colorInput.value = toolboxActiveCell?.color || "#f5ebd3";
+  colorInput.disabled = !toolboxActiveCell;
+  colorInput.addEventListener("change", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.color = colorInput.value;
+    saveState();
+    renderToolbox();
+  });
+  const bgColorLabel = document.createElement("span");
+  bgColorLabel.textContent = "Fond";
+  bgColorLabel.className = "toolbox-cell-color-label";
+  toolbar.appendChild(bgColorLabel);
+  toolbar.appendChild(colorInput);
+
+  const textColorInput = document.createElement("input");
+  textColorInput.type = "color";
+  textColorInput.className = "toolbox-cell-color";
+  textColorInput.value = toolboxActiveCell?.textColor || "#2e2013";
+  textColorInput.disabled = !toolboxActiveCell;
+  textColorInput.title = "Couleur du texte";
+  textColorInput.addEventListener("change", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.textColor = textColorInput.value;
+    saveState();
+    renderToolbox();
+  });
+  const textColorLabel = document.createElement("span");
+  textColorLabel.textContent = "Texte";
+  textColorLabel.className = "toolbox-cell-color-label";
+  toolbar.appendChild(textColorLabel);
+  toolbar.appendChild(textColorInput);
+
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "text-btn";
+  resetBtn.textContent = "Réinitialiser";
+  resetBtn.disabled = !toolboxActiveCell;
+  resetBtn.addEventListener("click", () => {
+    if (!toolboxActiveCell) return;
+    toolboxActiveCell.bold = false;
+    toolboxActiveCell.italic = false;
+    toolboxActiveCell.color = "";
+    toolboxActiveCell.textColor = "";
+    saveState();
+    renderToolbox();
+  });
+  toolbar.appendChild(resetBtn);
+
+  wrap.appendChild(toolbar);
+
   const table = document.createElement("table");
   table.className = "toolbox-table";
 
   page.rows.forEach((row, rowIndex) => {
     const tr = document.createElement("tr");
-    row.forEach((cell, colIndex) => {
+    row.forEach((cell) => {
       const td = document.createElement("td");
+      td.style.backgroundColor = cell.color || "";
+      if (cell === toolboxActiveCell) td.classList.add("active-cell");
+
       const input = document.createElement("input");
       input.type = "text";
-      input.value = cell;
+      input.value = cell.text;
+      input.style.fontWeight = cell.bold ? "700" : "400";
+      input.style.fontStyle = cell.italic ? "italic" : "normal";
+      input.style.color = cell.textColor || "";
+      input.addEventListener("focus", () => {
+        toolboxActiveCell = cell;
+        document
+          .querySelectorAll(".toolbox-table td.active-cell")
+          .forEach((el) => el.classList.remove("active-cell"));
+        td.classList.add("active-cell");
+        boldBtn.disabled = false;
+        italicBtn.disabled = false;
+        colorInput.disabled = false;
+        textColorInput.disabled = false;
+        resetBtn.disabled = false;
+        boldBtn.classList.toggle("active", !!cell.bold);
+        italicBtn.classList.toggle("active", !!cell.italic);
+        colorInput.value = cell.color || "#f5ebd3";
+        textColorInput.value = cell.textColor || "#2e2013";
+      });
       input.addEventListener("change", () => {
-        page.rows[rowIndex][colIndex] = input.value;
+        cell.text = input.value;
         saveState();
       });
       td.appendChild(input);
+
       tr.appendChild(td);
     });
     const rowActionTd = document.createElement("td");
@@ -727,7 +855,15 @@ function renderTableBlockBody(page) {
   addRowBtn.textContent = "+ Ligne";
   addRowBtn.addEventListener("click", () => {
     const columnCount = page.rows[0]?.length || 1;
-    page.rows.push(Array(columnCount).fill(""));
+    page.rows.push(
+      Array.from({ length: columnCount }, () => ({
+        text: "",
+        bold: false,
+        italic: false,
+        color: "",
+        textColor: "",
+      })),
+    );
     saveState();
     renderToolbox();
   });
@@ -738,7 +874,15 @@ function renderTableBlockBody(page) {
   addColBtn.className = "secondary";
   addColBtn.textContent = "+ Colonne";
   addColBtn.addEventListener("click", () => {
-    page.rows.forEach((row) => row.push(""));
+    page.rows.forEach((row) =>
+      row.push({
+        text: "",
+        bold: false,
+        italic: false,
+        color: "",
+        textColor: "",
+      }),
+    );
     saveState();
     renderToolbox();
   });
@@ -1266,8 +1410,14 @@ document.querySelector("#createNewPageBtn").addEventListener("click", () => {
   if (type === "list") page.items = [];
   if (type === "table")
     page.rows = [
-      ["", ""],
-      ["", ""],
+      [
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+      ],
+      [
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+        { text: "", bold: false, italic: false, color: "", textColor: "" },
+      ],
     ];
   state.toolbox.push(page);
   activeToolboxPageId = page.id;
