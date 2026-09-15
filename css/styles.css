@@ -1740,6 +1740,29 @@ menu {
 #newPageDialog .row input[type="text"] {
   flex: 1;
 }
+.toolbox-table {
+  border-collapse: collapse;
+  margin-top: 0.8rem;
+  width: 100%;
+}
+
+.toolbox-table td {
+  border: 1px solid var(--border);
+  padding: 0.3rem;
+}
+
+.toolbox-table td input {
+  width: 100%;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  padding: 0.4rem;
+}
+
+.toolbox-table-actions {
+  margin-top: 0.8rem;
+  gap: 0.6rem;
+}
 
 @media (max-width: 520px) {
   .stats-grid {

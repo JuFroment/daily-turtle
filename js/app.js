@@ -566,6 +566,9 @@ function renderToolbox() {
     if (activePage.type === "list") {
       pageEl.appendChild(renderListBlockBody(activePage));
     }
+    if (activePage.type === "table") {
+      pageEl.appendChild(renderTableBlockBody(activePage));
+    }
   }
 }
 
@@ -670,6 +673,91 @@ function renderListBlockBody(page) {
     list.appendChild(li);
   });
   wrap.appendChild(list);
+
+  return wrap;
+}
+
+function renderTableBlockBody(page) {
+  const wrap = document.createElement("div");
+  wrap.className = "toolbox-table-wrap";
+
+  const table = document.createElement("table");
+  table.className = "toolbox-table";
+
+  page.rows.forEach((row, rowIndex) => {
+    const tr = document.createElement("tr");
+    row.forEach((cell, colIndex) => {
+      const td = document.createElement("td");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = cell;
+      input.addEventListener("change", () => {
+        page.rows[rowIndex][colIndex] = input.value;
+        saveState();
+      });
+      td.appendChild(input);
+      tr.appendChild(td);
+    });
+    const rowActionTd = document.createElement("td");
+    if (page.rows.length > 1) {
+      const deleteRowBtn = document.createElement("button");
+      deleteRowBtn.type = "button";
+      deleteRowBtn.className = "text-btn";
+      deleteRowBtn.textContent = "✕";
+      deleteRowBtn.setAttribute("aria-label", "Supprimer la ligne");
+      deleteRowBtn.addEventListener("click", () => {
+        page.rows.splice(rowIndex, 1);
+        saveState();
+        renderToolbox();
+      });
+      rowActionTd.appendChild(deleteRowBtn);
+    }
+    tr.appendChild(rowActionTd);
+    table.appendChild(tr);
+  });
+
+  wrap.appendChild(table);
+
+  const actions = document.createElement("div");
+  actions.className = "row toolbox-table-actions";
+
+  const addRowBtn = document.createElement("button");
+  addRowBtn.type = "button";
+  addRowBtn.className = "secondary";
+  addRowBtn.textContent = "+ Ligne";
+  addRowBtn.addEventListener("click", () => {
+    const columnCount = page.rows[0]?.length || 1;
+    page.rows.push(Array(columnCount).fill(""));
+    saveState();
+    renderToolbox();
+  });
+  actions.appendChild(addRowBtn);
+
+  const addColBtn = document.createElement("button");
+  addColBtn.type = "button";
+  addColBtn.className = "secondary";
+  addColBtn.textContent = "+ Colonne";
+  addColBtn.addEventListener("click", () => {
+    page.rows.forEach((row) => row.push(""));
+    saveState();
+    renderToolbox();
+  });
+  actions.appendChild(addColBtn);
+
+  if (page.rows[0]?.length > 1) {
+    const removeColBtn = document.createElement("button");
+    removeColBtn.type = "button";
+    removeColBtn.className = "text-btn";
+    removeColBtn.textContent = "− Colonne";
+    removeColBtn.addEventListener("click", () => {
+      page.rows.forEach((row) => row.pop());
+      saveState();
+      renderToolbox();
+    });
+    actions.appendChild(removeColBtn);
+  }
+
+  wrap.appendChild(actions);
 
   return wrap;
 }
@@ -1176,6 +1264,11 @@ document.querySelector("#createNewPageBtn").addEventListener("click", () => {
   if (type === "checklist") page.items = [];
   if (type === "text") page.content = "";
   if (type === "list") page.items = [];
+  if (type === "table")
+    page.rows = [
+      ["", ""],
+      ["", ""],
+    ];
   state.toolbox.push(page);
   activeToolboxPageId = page.id;
   saveState();
