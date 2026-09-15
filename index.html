@@ -117,15 +117,44 @@
 
         <div id="toolboxPage"></div>
 
-        <div class="row toolbox-add-page-row">
-          <select id="newPageType">
-            <option value="checklist">Checklist</option>
-            <option value="text">Texte</option>
-          </select>
-          <button type="button" id="addPageBtn" class="secondary">
-            Nouvelle page
-          </button>
-        </div>
+        <dialog id="newPageDialog">
+          <form method="dialog">
+            <div class="row between">
+              <h2>Ajouter un outil dans la carapace</h2>
+              <button
+                value="cancel"
+                formnovalidate
+                class="text-btn"
+                aria-label="Fermer"
+              >
+                Fermer
+              </button>
+            </div>
+            <div class="row">
+              <label for="newPageNameInput">Nom de l'outil</label>
+              <input
+                type="text"
+                id="newPageNameInput"
+                placeholder="Ex. Courses, Idées cadeaux…"
+                required
+              />
+            </div>
+            <div class="row">
+              <label for="newPageTypeInput">Type</label>
+              <select id="newPageTypeInput" class="toolbox-type-select">
+                <option value="checklist">Checklist</option>
+                <option value="text">Texte</option>
+                <option value="list">Liste</option>
+              </select>
+            </div>
+            <menu>
+              <button value="cancel" formnovalidate class="secondary">
+                Annuler
+              </button>
+              <button id="createNewPageBtn" value="default">Créer</button>
+            </menu>
+          </form>
+        </dialog>
       </section>
 
       <section class="card" aria-labelledby="weekTitle">

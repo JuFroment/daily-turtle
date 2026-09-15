@@ -1222,6 +1222,7 @@ h2 {
   );
 }
 
+select,
 textarea,
 input[type="text"],
 input[type="number"] {
@@ -1699,8 +1700,45 @@ menu {
   margin-top: 1.2rem;
   gap: 0.6rem;
 }
-.toolbox-add-page-row {
-  margin-top: 1.2rem;
+.toolbox-list {
+  list-style: disc;
+  margin: 0.8rem 0 0;
+  padding-left: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.toolbox-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.toolbox-add-page-btn {
+  margin-left: auto;
+  background: var(--secondary-action);
+  color: var(--secondary-action-text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+}
+#newPageDialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+.toolbox-type-select {
+  width: auto;
+  margin: 0;
+}
+
+#newPageDialog .row label {
+  margin-top: 0;
+}
+#newPageDialog .row input[type="text"] {
+  flex: 1;
 }
 
 @media (max-width: 520px) {

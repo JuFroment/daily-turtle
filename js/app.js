@@ -540,6 +540,19 @@ function renderToolbox() {
     }
   });
 
+  const addPageTabBtn = document.createElement("button");
+  addPageTabBtn.type = "button";
+  addPageTabBtn.className = "text-btn";
+  addPageTabBtn.classList.add("toolbox-add-page-btn");
+  addPageTabBtn.textContent = "+";
+  addPageTabBtn.setAttribute("aria-label", "Nouvelle page");
+  addPageTabBtn.addEventListener("click", () => {
+    document.querySelector("#newPageNameInput").value = "";
+    document.querySelector("#newPageTypeInput").value = "checklist";
+    document.querySelector("#newPageDialog").showModal();
+  });
+  tabsEl.appendChild(addPageTabBtn);
+
   const pageEl = document.querySelector("#toolboxPage");
   pageEl.innerHTML = "";
   const activePage = state.toolbox.find((p) => p.id === activeToolboxPageId);
@@ -549,6 +562,9 @@ function renderToolbox() {
     }
     if (activePage.type === "text") {
       pageEl.appendChild(renderTextBlockBody(activePage));
+    }
+    if (activePage.type === "list") {
+      pageEl.appendChild(renderListBlockBody(activePage));
     }
   }
 }
@@ -624,16 +640,39 @@ function renderTextBlockBody(block) {
   return textarea;
 }
 
-document.querySelector("#addPageBtn").addEventListener("click", () => {
-  const type = document.querySelector("#newPageType").value;
-  const page = { id: crypto.randomUUID(), name: "Nouvelle page", type };
-  if (type === "checklist") page.items = [];
-  if (type === "text") page.content = "";
-  state.toolbox.push(page);
-  activeToolboxPageId = page.id;
-  saveState();
-  renderToolbox();
-});
+function renderListBlockBody(page) {
+  const wrap = document.createElement("div");
+
+  const form = document.createElement("form");
+  form.className = "backlog-form";
+  form.innerHTML = `<input type="text" placeholder="Ajouter une ligne…" /><button type="submit">Ajouter</button>`;
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = form.querySelector("input");
+    const text = input.value.trim();
+    if (!text) return;
+    page.items.push(text);
+    saveState();
+    renderToolbox();
+  });
+  wrap.appendChild(form);
+
+  const list = document.createElement("ul");
+  list.className = "toolbox-list";
+  page.items.forEach((text, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${escapeHtml(text)}</span><button type="button" class="text-btn" aria-label="Supprimer">✕</button>`;
+    li.querySelector("button").addEventListener("click", () => {
+      page.items.splice(index, 1);
+      saveState();
+      renderToolbox();
+    });
+    list.appendChild(li);
+  });
+  wrap.appendChild(list);
+
+  return wrap;
+}
 
 function reviewKey(date = new Date()) {
   const d = new Date(
@@ -1127,6 +1166,20 @@ document.querySelector("#saveQuestsBtn").addEventListener("click", (event) => {
   saveState();
   document.querySelector("#questDialog").close();
   render();
+});
+
+document.querySelector("#createNewPageBtn").addEventListener("click", () => {
+  const name = document.querySelector("#newPageNameInput").value.trim();
+  if (!name) return;
+  const type = document.querySelector("#newPageTypeInput").value;
+  const page = { id: crypto.randomUUID(), name, type };
+  if (type === "checklist") page.items = [];
+  if (type === "text") page.content = "";
+  if (type === "list") page.items = [];
+  state.toolbox.push(page);
+  activeToolboxPageId = page.id;
+  saveState();
+  renderToolbox();
 });
 
 document.querySelector("#exportBtn").addEventListener("click", () => {
