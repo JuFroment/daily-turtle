@@ -1497,6 +1497,21 @@ document.querySelector("#resetBtn").addEventListener("click", () => {
   render();
 });
 
+document.querySelector("#contactForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = document.querySelector("#contactNameInput").value.trim();
+  const message = document.querySelector("#contactMessageInput").value.trim();
+  if (!message) return;
+
+  const subject = name
+    ? `Contact Daily Turtle — ${name}`
+    : "Contact Daily Turtle";
+  const body = name ? `${message}\n\n— ${name}` : message;
+  const mailtoUrl = `mailto:dailyturtle.contact@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailtoUrl;
+  event.target.reset();
+});
+
 window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();
   deferredInstallPrompt = event;
