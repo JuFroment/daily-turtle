@@ -262,6 +262,31 @@
           </div>
         </details>
       </section>
+
+      <section class="card">
+        <details>
+          <summary>Nous contacter</summary>
+          <div class="details-body">
+            <p class="muted small">
+              Une question, un bug, une idée ? Écris-nous.
+            </p>
+            <form id="contactForm">
+              <label for="contactNameInput">Votre nom (optionnel)</label>
+              <input id="contactNameInput" type="text" maxlength="50" />
+
+              <label for="contactMessageInput">Message</label>
+              <textarea
+                id="contactMessageInput"
+                rows="4"
+                maxlength="2000"
+                required
+              ></textarea>
+
+              <button type="submit" class="secondary">Envoyer</button>
+            </form>
+          </div>
+        </details>
+      </section>
     </main>
 
     <dialog id="profileDialog">
