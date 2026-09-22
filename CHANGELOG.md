@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/JuFroment/daily-turtle/compare/v1.1.1...v1.2.0) (2026-09-22)
+
+### Features
+
+- add a dedicated contact form ([#161](https://github.com/JuFroment/daily-turtle/issues/161)) ([#163](https://github.com/JuFroment/daily-turtle/issues/163)) ([3b781c5](https://github.com/JuFroment/daily-turtle/commit/3b781c50277bb3fb8d5bfc8c79beac78c5de7a61))
+
 ## [1.1.1](https://github.com/JuFroment/daily-turtle/compare/v1.1.0...v1.1.1) (2026-09-13)
 
 ### Bug Fixes
